@@ -7,6 +7,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import JoinGame from "../../components/JoinGame";
 import CreateGame from "../../components/CreateGame";
+import NavBar from "../../components/NavBar";
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -16,6 +17,7 @@ import '@fontsource/roboto/700.css';
 export default function Home() {
   return (
     <div>
+      <NavBar />
       <Accordion defaultExpanded>
         <AccordionSummary
             expandIcon={<ExpandMoreIcon />}

@@ -1,14 +1,14 @@
 import React from "react";
 
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
 export default function JoinGame() {
   // <input type="text" class="form-control" id="game_id" name="game_id" placeholder="Enter game id" {% if game_id %}value="{{game_id}}"{% endif %} />
   // Fix above on line 17 for react conditional attribute
   return (
-      <div id="login_container">
+      <form id="login_container">
         {/* <form action="/login" method="get">
           <fieldset>
             <div class="form-group">
@@ -22,30 +22,25 @@ export default function JoinGame() {
             <button type="submit" class="btn btn-primary">Submit</button>
           </fieldset>
         </form> */}
-        <Box
-          component="form"
-          sx={{
-            '& .MuiTextField-root': { m: 1, width: '25ch' },
-          }}
-          noValidate
-          autoComplete="off"
-        >
-          <div>
+        <Grid2 container sx={{ m: '3px' }} columnSpacing={2} rowSpacing={3} direction="column" alignItems="center" justifyContent="center">
+          <Grid2 item>
             <TextField
               required
               id="outlined-required"
               label="Username"
               placeholder="Enter username"
             />
+          </Grid2>
+          <Grid2 item>
             <TextField
               required
               id="outlined-required"
               label="Game ID"
               placeholder="Enter game id"
             />
-          </div>
-          <Button variant="contained">Submit</Button>
-        </Box>
-      </div>
+          </Grid2>
+          <Button variant="contained" type="submit">Submit</Button>
+        </Grid2>
+      </form>
   );
 }

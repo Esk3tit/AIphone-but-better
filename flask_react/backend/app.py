@@ -64,7 +64,6 @@ def create_game():
         db.sql_commit('INSERT INTO Games (num_turns) VALUES (?)', (num_turns,))
         game_id = db.sql_fetchone('SELECT MAX(id) FROM Games')[0]
         db.sql_commit('INSERT INTO Rounds (round_number, game_id) VALUES (?, ?)', (0, game_id))
-        # redirect(f"/?game_id={game_id}")
         return {
             "game_id": game_id
         }

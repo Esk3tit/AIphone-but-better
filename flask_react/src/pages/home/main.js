@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -15,10 +15,14 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 export default function Home() {
+
+  // Lifted Game ID state
+  const [gameId, setGameId] = useState("");
+
   return (
     <div>
       <NavBar />
-      <Accordion defaultExpanded>
+      <Accordion defaultExpanded disableGutters>
         <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1a-content"
@@ -27,10 +31,10 @@ export default function Home() {
             <Typography variant="h4">Join Existing Game</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <JoinGame/>
+            <JoinGame gameId={gameId} setGameId={setGameId} />
           </AccordionDetails>
       </Accordion>
-      <Accordion defaultExpanded>
+      <Accordion defaultExpanded disabled={gameId ? true : false} disableGutters>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel2a-content"
@@ -39,7 +43,7 @@ export default function Home() {
           <Typography variant="h4">Create New Game</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <CreateGame/>
+          <CreateGame gameId={gameId} setGameId={setGameId} />
         </AccordionDetails>
       </Accordion>
     </div>

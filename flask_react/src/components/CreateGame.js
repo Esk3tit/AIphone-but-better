@@ -9,11 +9,10 @@ import Alert from '@mui/material/Alert';
 import axios from 'axios';
 
 
-export default function CreateGame() {
+export default function CreateGame({ gameId, setGameId }) {
 
     const [numTurns, setNumTurns] = useState("");
     const [openAlert, setOpenAlert] = useState(false);
-    const [gameId, setGameId] = useState("");
 
     async function redirectToGame(e) {
         e.preventDefault();
@@ -24,6 +23,10 @@ export default function CreateGame() {
         const newUrl = "/?game_id=" + res.data.game_id;
         window.history.replaceState(null, "", newUrl);
         setOpenAlert(true);
+    }
+
+    const copyIdToClipboard = () => {
+        navigator.clipboard.writeText(gameId);
     }
 
     const handleClose = () => {
@@ -43,13 +46,20 @@ export default function CreateGame() {
                             onChange={e => setNumTurns(e.target.value)}
                             value={numTurns}
                             name="num_turns"
+                            disabled={gameId ? true : false}
                         />
                     </Grid2>
-                    <Button variant="contained" type="submit">New Game</Button>
+                    <Button variant="contained" disabled={gameId ? true : false} type="submit">New Game</Button>
                 </Grid2>
             </form>
             <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="info" sx={{ width: '100%' }}>
+                <Alert onClose={handleClose} severity="info" sx={{ width: '100%' }} 
+                    action={
+                        <Button color="inherit" size="small" onClick={copyIdToClipboard}>
+                            COPY TO CLIPBOARD
+                        </Button>
+                    }
+                >
                     The game ID to share with your friends is: {gameId}
                 </Alert>
             </Snackbar>

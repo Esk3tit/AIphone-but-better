@@ -2,3 +2,4 @@ __pycache__
 flask_react/backend/data
 flask_react/backend/game.db
 flask_react/backend/aiphoneenv
+image_generator/stable-diffusion-v1-5

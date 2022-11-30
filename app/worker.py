@@ -1,18 +1,20 @@
 import eventlet
-from flask_socketio import SocketIO
+from threading import Thread
 import redis
 import json
 import os
 
 from game_db import GameDb
 from util import get_current_round_id, get_images_path, update_images, get_user_ids_for_game
-
+from flask_socketio import SocketIO
 
 class Worker:
     def __init__(self, socketio: SocketIO) -> None:
         self.q = eventlet.Queue()
         self.r = redis.Redis(host=os.environ.get('REDIS_HOST', 'localhost'))
-        self.w = socketio.start_background_task(target=self.worker, socketio=socketio)
+        self.w = Thread(daemon=True, target=self.worker, args=(socketio,), name="Image Storing Worker")
+        print("Starting worker thread")
+        self.w.start()
 
     def worker(self, socketio) -> None:
         print('starting worker...')
@@ -32,11 +34,12 @@ class Worker:
                 update_images(images_path=images_path, prompt=prompt, drawn_for=drawn_for, db=db)
 
             # Notify clients that images have been generated
-            print('Done generating images, sending reload message via web socket')
-            socketio.emit('reload', 'reload', to=user_id)
+            print('Done generating images, sending reload message via socketio')
+            socketio.emit('reload', to=user_id)
             self.q.task_done()
 
     def enqueue_prompt(self, game_id, round_number, user_id, prompt: str, drawn_for: str, num_images: int = 4):
         # don't ask
+        print('enqueuing prompt')
         self.q.put('work pls')
         self.r.lpush('image_to_generate', json.dumps([game_id, round_number, user_id, prompt, drawn_for, num_images]))

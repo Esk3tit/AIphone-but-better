@@ -5,6 +5,7 @@ eventlet.monkey_patch()  # Must be done before any other imports
 
 from flask import Flask, send_file, render_template, send_from_directory, request, redirect, abort
 from flask_socketio import SocketIO, join_room, leave_room, send
+from flask_cors import CORS
 from config import DATA_PATH, FLASK_SECRET_KEY
 from game_db import GameDb
 from worker import Worker
@@ -12,8 +13,10 @@ from util import update_images, get_images_path, get_current_round_id, get_curre
 import requests
 
 app = Flask(__name__)
+CORS(app)
 app.config['SECRET_KEY'] = FLASK_SECRET_KEY
-socketio = SocketIO(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
 worker = Worker(socketio)
 
 # Join users to rooms based on their user_id so that messages are sent to the correct places
@@ -22,25 +25,15 @@ worker = Worker(socketio)
 def on_join(data):
     username = data['username']
     room = data['user_id']
-    print(f"{username} joined")
     join_room(room)
     print(f"{username} joined room {room}")
 
 @socketio.on('leave')
-def on_join(data):
+def on_leave(data):
     username = data['username']
     room = data['user_id']
     leave_room(room)
-    print(f"{username} left")
-
-@app.route("/")
-def index():
-    invalid = request.args.get('invalid', '0') == '1'
-    try:
-        game_id = request.args['game_id']
-        return render_template("login.html", game_id = game_id, invalid = invalid)
-    except KeyError as ex:
-        return render_template("login.html", invalid = invalid)
+    print(f"{username} left room {room}")
 
 @app.route("/login", methods=['GET'])
 def login():
@@ -69,7 +62,10 @@ def login():
             for info in user_info:
                 socketio.send(f"{username} joined", to=info[0])
                 socketio.emit('game_info', game_info, to=info[0])
-            return redirect(f"/game?user_id={user_id}&game_id={game_id}")
+            return {
+                "user_id": user_id,
+                "game_id": game_id
+            }
 
 @app.route("/create_game", methods=['GET'])
 def create_game():
@@ -77,7 +73,9 @@ def create_game():
         db.sql_commit('INSERT INTO Games (num_turns) VALUES (?)', (0,))
         game_id = db.sql_fetchone('SELECT MAX(id) FROM Games')[0]
         db.sql_commit('INSERT INTO Rounds (round_number, game_id) VALUES (?, ?)', (0, game_id))
-        return redirect(f"/?game_id={game_id}")
+        return {
+            "game_id": game_id
+        }
 
 def get_user_info(game_id, db):
     return tuple((str(x[0]), x[1]) for x in db.sql_fetchall('SELECT user_id, username FROM Players INNER JOIN Users ON Players.user_id = Users.id WHERE game_id = ?', (game_id,)))
@@ -139,7 +137,9 @@ def game():
                 user_round_info = [{'username': x[0], 'prompt': x[1], 'image_id': x[2]} for x in user_round_info_raw]
                 player_rounds_list += [{'username': current_user_name, 'rounds': user_round_info}]
             ctx['player_rounds_list'] = player_rounds_list
-            return render_template('results.html', **ctx)
+            
+            print("Context for results round: ", ctx)
+            return ctx
 
         # If not round 0, display the next user's thingamabob
         if round_number != 0:
@@ -169,8 +169,9 @@ def game():
             images_path = get_images_path(game_id=game_id, round_number=round_number, user_id=user_id)
             ctx['images'] = update_images(db=db, images_path=images_path, prompt=prompt, drawn_for=ctx['drawn_for'])
             ctx['generated_images'] = True
-
-        return render_template('game.html', **ctx)
+        
+        print("Context for regular round: ", ctx)
+        return ctx
 
 @app.route("/submit_prompt", methods=['POST'])
 def submit_prompt():
@@ -186,8 +187,12 @@ def submit_prompt():
         round_id = get_current_round_id(game_id, db)
         existing_turn = db.sql_fetchone('SELECT working FROM Turns WHERE user_id = ? AND round_id = ?', (user_id, round_id))
         if existing_turn and existing_turn[0]:
-            return redirect(f"/game?user_id={user_id}&game_id={game_id}&wait=1")
-
+            return {
+                "user_id": user_id,
+                "game_id": game_id,
+                "wait": 1
+            } 
+        
         round_number = get_current_round_number(game_id, db)
         if not existing_turn:
             db.sql_commit('INSERT INTO Turns (round_id, user_id, prompt, working, ready) VALUES (?, ?, ?, 1, 0)', (round_id, user_id, prompt))
@@ -205,7 +210,10 @@ def submit_prompt():
             socketio.send(f"{username} is generating their images", to=info[0])
             socketio.emit('game_info', game_info, to=info[0])
 
-        return redirect(f"/game?user_id={user_id}&game_id={game_id}")
+        return {
+            "user_id": user_id,
+            "game_id": game_id,
+        } 
 
 @app.route("/choose_image")
 def choose_image():
@@ -246,8 +254,7 @@ def choose_image():
             for id in get_user_ids_for_game(game_id, db):
                 socketio.emit('reload', 'reload', to=id)
 
-
-    return redirect(f"/game?user_id={user_id}&game_id={game_id}")
+    return ("", 204)
 
 @app.route('/random_prompt', methods=['POST'])
 def random_prompt():

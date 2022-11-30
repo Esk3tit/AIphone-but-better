@@ -20,6 +20,7 @@ services:
       - redis
     environment:
       - REDIS_HOST=redis
+      - PYTHONUNBUFFERED=1
 
   image_generator:
     image: bobbysinclusto/aiphone-image_generator:latest
@@ -39,6 +40,7 @@ services:
       - redis
     environment:
       - REDIS_HOST=redis
+      - PYTHONUNBUFFERED=1
     deploy:
       resources:
         reservations:

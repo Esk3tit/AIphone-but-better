@@ -34,4 +34,3 @@ if __name__ == '__main__':
         # Update flask with results
         r.lpush('flask_image_done', data)
         print('Sent update to redis')
-        # TODO: Add to another react-specific list so that react can also update when images are done being generated

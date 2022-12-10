@@ -1,10 +1,14 @@
-import logo from './logo.svg';
 import './App.css';
 import Home from './pages/home/main';
+import NavBar from './components/NavBar';
+import { Outlet } from 'react-router-dom';
 
 function App() {
   return (
-    <Home />
+    <>
+      <NavBar />
+      <Outlet />
+    </>
   );
 }
 

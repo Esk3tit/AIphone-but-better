@@ -5,8 +5,7 @@ import Button from '@mui/material/Button';
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
 export default function JoinGame({ gameId, setGameId }) {
-  // <input type="text" class="form-control" id="game_id" name="game_id" placeholder="Enter game id" {% if game_id %}value="{{game_id}}"{% endif %} />
-  // Fix above on line 17 for react conditional attribute
+  
   return (
       <form id="login_container">
         <Grid2 container sx={{ m: '3px' }} columnSpacing={2} rowSpacing={3} direction="column" alignItems="center" justifyContent="center">

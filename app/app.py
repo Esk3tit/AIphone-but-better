@@ -56,7 +56,11 @@ def login():
             # Notify existing users that a new player joined
             for id in get_user_ids_for_game(game_id, db):
                 socketio.send(f"{username} joined", to=id)
-            return redirect(f"/game?user_id={user_id}&game_id={game_id}")
+            #return redirect(f"/game?user_id={user_id}&game_id={game_id}")
+            return {
+                "user_id": user_id,
+                "game_id": game_id
+            }
 
 @app.route("/create_game", methods=['GET'])
 def create_game():

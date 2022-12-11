@@ -7,21 +7,21 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
 import axios from 'axios';
+import { useSearchParams } from "react-router-dom";
 
 
 export default function CreateGame({ gameId, setGameId }) {
 
     const [numTurns, setNumTurns] = useState("");
     const [openAlert, setOpenAlert] = useState(false);
+    const [searchParams, setSearchParams] = useSearchParams();
 
     async function redirectToGame(e) {
         e.preventDefault();
         const res = await axios.get("/create_game", { params: { num_turns: numTurns } });
-        //const data = await fetch("http://localhost:5000/create_game", { method: "GET", params: { num_turns: numTurns } });
         console.log(res.data.game_id);
         setGameId(res.data.game_id);
-        const newUrl = "/?game_id=" + res.data.game_id;
-        window.history.replaceState(null, "", newUrl);
+        setSearchParams({ game_id: res.data.game_id });
         setOpenAlert(true);
     }
 

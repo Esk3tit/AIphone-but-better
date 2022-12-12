@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+import axios from 'axios';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -12,45 +14,37 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
+import { useLoaderData } from 'react-router-dom';
+
+export const gameLoader = async ({ request }) => {
+    const url = new URL(request.url);
+    const user_id = url.searchParams.get("user_id");
+    const game_id = url.searchParams.get("game_id");
+    const res = await axios.get("/game", { params: { user_id: user_id, game_id: game_id } });
+    return res.data;
+}
 
 export default function Game() {
+
+    const gameContext = useLoaderData();
+    const [ctx, setCtx] = useState(gameContext);
+
+    async function refresh() {
+        const res = await axios.get("/game", { params: { user_id: ctx.user_id, game_id: ctx.game_id } });
+        setCtx(res.data);
+    }
+
     return (
         <div id="main-content" style={{position: "relative"}}>
-            {/* <div style="position: absolute; top: 10px; right: 10px; text-align: right;">
-                <div class="accordion" id="accordionExample">
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingOne">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">Game info</button>
-                    </h2>
-                    // This shows when accordion is expanded
-                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
-                        <table class="table table-hover">
-                        <thead>
-                            <tr>
-                            <th scope="col">Username</th>
-                            <th scope="col">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for p_info in all_players_info %}
-                            <tr>
-                            <td>{{p_info['name']}}</td>
-                            <td>{{p_info['status']}}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                        </table>
-                        <form action="/game" method="get">
-                        <input type="hidden" name="user_id" value="{{user_id}}" />
-                        <input type="hidden" name="game_id" value="{{game_id}}" />
-                        <button class="btn btn-primary" type="submit" style="margin-top: 10px;">click here to refresh</button>
-                        </form>
-                    </div>
-                    </div>
-                </div>
-                </div>
-            </div> */}
+            
             <Accordion sx={
                 {
                     position: "absolute",
@@ -77,33 +71,46 @@ export default function Game() {
                             </TableHead>
                             <TableBody>
                                 {
-
+                                    ctx.all_players_info.map(p_info => (
+                                        <TableRow
+                                            key={p_info.name}
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        >
+                                            <TableCell component="th" scope="row">
+                                                {p_info.name}
+                                            </TableCell>
+                                            <TableCell align="right">{p_info.status}</TableCell>
+                                        </TableRow>
+                                    ))
                                 }
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    <Grid2 container sx={{ m: '3px', margin: '10px' }} columnSpacing={2} rowSpacing={3} direction="column" alignItems="center" justifyContent="center">
+                        <Button onClick={refresh} variant='contained'>Refresh</Button>
+                    </Grid2>
                 </AccordionDetails>
             </Accordion>
 
-            {/* <h4>Username: {username}</h4>
-            <p>Game id: {game_id}</p>
-            <p>Round number: {round_number + 1}</p> */}
+            <Typography variant="h6">Username: {ctx.username}</Typography>
+            <Typography>Game id: {ctx.game_id}</Typography>
+            <Typography>Round number: {ctx.round_number + 1}</Typography>
 
             {/* {% if prev_user_name or chosen_image_id %}
-            <div id="comparison_box" class="w-100">
+            <div id="comparison_box" className="w-100">
                 {% if prev_user_name %}
-                    <div class="card image-width-css-stuff">
-                    <h4 class="card-title">{prev_user_name}'s image</h4>
+                    <div className="card image-width-css-stuff">
+                    <h4 className="card-title">{prev_user_name}'s image</h4>
                     <a href="javascript:pop('img{{prev_user_image_id}}');">
-                        <img src="/images?id={{prev_user_image_id}}" class="w-100" />
+                        <img src="/images?id={{prev_user_image_id}}" className="w-100" />
                     </a>
                     </div>
                 {% endif %}
                 {% if chosen_image_id %}
-                <div class="card image-width-css-stuff">
-                    <h4 class="card-title">Chosen image</h4>
+                <div className="card image-width-css-stuff">
+                    <h4 className="card-title">Chosen image</h4>
                     <a href="javascript:pop('img{{chosen_image_id}}');">
-                    <img src="/images?id={{chosen_image_id}}" class="w-100" />
+                    <img src="/images?id={{chosen_image_id}}" className="w-100" />
                     </a>
                 </div>
                 {% endif %}
@@ -112,8 +119,8 @@ export default function Game() {
             <div id="prompt-container">
                 <form action="/submit_prompt" method="post">
                     <fieldset>
-                        <div class="form-group">
-                        <label for="prompt" class="form-label mt-4">
+                        <div className="form-group">
+                        <label for="prompt" className="form-label mt-4">
                             {% if not generated_images %}
                             {% if prev_user_image_id %}
                             Guess the prompt for {prev_user_name}'s image!
@@ -124,21 +131,21 @@ export default function Game() {
                             Your prompt:
                             {% endif %}
                         </label>
-                        <textarea {% if generated_images %}disabled{% endif %} class="form-control" id="prompt" name="prompt" rows="3">{prompt}</textarea>
+                        <textarea {% if generated_images %}disabled{% endif %} className="form-control" id="prompt" name="prompt" rows="3">{prompt}</textarea>
                         </div>
                         {% if not generated_images %}
                         <input type="hidden" name="user_id" value="{{user_id}}" />
                         <input type="hidden" name="game_id" value="{{game_id}}" />
                         <input type="hidden" name="drawn_for" value="{{drawn_for}}" />
-                        <label for="num_images" class="form-label mt-4">Select number of images to generate</label>
+                        <label for="num_images" className="form-label mt-4">Select number of images to generate</label>
                         <div id="submit-box-thing">
-                        <select class="form-select" id="num_images" name="num_images">
+                        <select className="form-select" id="num_images" name="num_images">
                             <option>4</option>
                             <option>3</option>
                             <option>2</option>
                             <option>1</option>
                         </select>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" className="btn btn-primary">Submit</button>
                         {% endif %}
                         </div>
                     </fieldset>
@@ -151,9 +158,9 @@ export default function Game() {
                 <h2>Images generated so far</h2>
                 <div id="images">
                 {% for img in images %}
-                <div class="card image-card-thingy">
+                <div className="card image-card-thingy">
                 <a href="javascript:pop('img{{img['id']}}');">
-                    <img class="image_thingy" id="img{{img['id']}}" src="/images?id={{img['id']}}" />
+                    <img className="image_thingy" id="img{{img['id']}}" src="/images?id={{img['id']}}" />
                 </a>
                 <a href="/choose_image?game_id={{game_id}}&user_id={{user_id}}&image_id={{img['id']}}">Choose</a>
                 </div>
@@ -161,11 +168,11 @@ export default function Game() {
                 </div>
             {% endif %} */}
 
-                <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" style={{display: "flex"}}>
-                        <div class="modal-content w-100">
-                            <div class="modal-body w-100">
-                                <img src="" class="w-100" id="imagepreview" />
+                <div className="modal fade" id="imagemodal" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div className="modal-dialog" style={{display: "flex"}}>
+                        <div className="modal-content w-100">
+                            <div className="modal-body w-100">
+                                <img src="" className="w-100" id="imagepreview" />
                             </div>
                         </div>
                     </div>

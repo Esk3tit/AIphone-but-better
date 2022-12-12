@@ -56,7 +56,6 @@ def login():
             # Notify existing users that a new player joined
             for id in get_user_ids_for_game(game_id, db):
                 socketio.send(f"{username} joined", to=id)
-            #return redirect(f"/game?user_id={user_id}&game_id={game_id}")
             return {
                 "user_id": user_id,
                 "game_id": game_id
@@ -126,7 +125,8 @@ def game():
                 user_round_info = [{'username': x[0], 'prompt': x[1], 'image_id': x[2]} for x in user_round_info_raw]
                 player_rounds_list += [{'username': current_user_name, 'rounds': user_round_info}]
             ctx['player_rounds_list'] = player_rounds_list
-            return render_template('results.html', **ctx)
+            # return render_template('results.html', **ctx)
+            return ctx
 
         # If not round 0, display the next user's thingamabob
         if round_number != 0:
@@ -156,7 +156,8 @@ def game():
             ctx['images'] = update_images(db=db, images_path=images_path, prompt=prompt, drawn_for=ctx['drawn_for'])
             ctx['generated_images'] = True
 
-        return render_template('game.html', **ctx)
+        # return render_template('game.html', **ctx)
+        return ctx
 
 @app.route("/submit_prompt", methods=['POST'])
 def submit_prompt():

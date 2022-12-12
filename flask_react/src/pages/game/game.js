@@ -5,16 +5,24 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 export default function Game() {
     return (
-        <div id="main-content" style="position: relative;">
+        <div id="main-content" style={{position: "relative"}}>
             {/* <div style="position: absolute; top: 10px; right: 10px; text-align: right;">
                 <div class="accordion" id="accordionExample">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">Game info</button>
                     </h2>
+                    // This shows when accordion is expanded
                     <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
                         <table class="table table-hover">
@@ -43,7 +51,14 @@ export default function Game() {
                 </div>
                 </div>
             </div> */}
-            <Accordion>
+            <Accordion sx={
+                {
+                    position: "absolute",
+                    top: "10px",
+                    right: "10px",
+                    textAlign: "right"
+                }
+            }>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1a-content"
@@ -52,18 +67,29 @@ export default function Game() {
                     <Typography>Game Info</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Typography>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                        malesuada lacus ex, sit amet blandit leo lobortis eget.
-                    </Typography>
+                    <TableContainer component={Paper}>
+                        <Table sx={{ minWidth: 650 }} size="small" aria-label="player table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Username</TableCell>
+                                    <TableCell align="right">Status</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {
+
+                                }
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </AccordionDetails>
             </Accordion>
 
-            <h4>Username: {username}</h4>
+            {/* <h4>Username: {username}</h4>
             <p>Game id: {game_id}</p>
-            <p>Round number: {round_number + 1}</p>
+            <p>Round number: {round_number + 1}</p> */}
 
-            {% if prev_user_name or chosen_image_id %}
+            {/* {% if prev_user_name or chosen_image_id %}
             <div id="comparison_box" class="w-100">
                 {% if prev_user_name %}
                     <div class="card image-width-css-stuff">
@@ -133,10 +159,10 @@ export default function Game() {
                 </div>
                 {% endfor %}
                 </div>
-            {% endif %}
+            {% endif %} */}
 
                 <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog" style="display: flex;">
+                    <div class="modal-dialog" style={{display: "flex"}}>
                         <div class="modal-content w-100">
                             <div class="modal-body w-100">
                                 <img src="" class="w-100" id="imagepreview" />
@@ -145,7 +171,7 @@ export default function Game() {
                     </div>
                 </div>
             </div>
-        </div>
-        </div>
+        // </div>
+        // </div>
     );
 }

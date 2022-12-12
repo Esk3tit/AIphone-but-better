@@ -4,16 +4,23 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
+import { useNavigate } from "react-router-dom";
+
 import axios from 'axios';
+import { Unstable_Grid } from "@mui/system";
 
 export default function JoinGame({ gameId, setGameId }) {
 
   const [username, setUsername] = useState("");
+  const navigate = useNavigate();
   
   async function handleSubmit(e) {
     e.preventDefault();
     const res = await axios.get("/login", { params: { username: username, game_id: gameId } });
     console.log(res.data);
+    const {user_id, game_id} = res.data;
+    navigate(`/game?user_id=${user_id}&game_id=${game_id}`);
+
   }
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { createContext, useState } from 'react';
 
 import axios from 'axios';
 
@@ -40,6 +40,19 @@ export default function Game() {
     async function refresh() {
         const res = await axios.get("/game", { params: { user_id: ctx.user_id, game_id: ctx.game_id } });
         setCtx(res.data);
+    }
+
+    let prompt;
+    if (!ctx.generated_images) {
+        if (ctx.prev_user_image_id) {
+            prompt = `Guess the prompt for ${prev_user_name}'s image!`;
+        }
+        else {
+            prompt = "Enter your prompt:";
+        }
+    }
+    else {
+        prompt = "Your prompt:";
     }
 
     return (
@@ -115,43 +128,37 @@ export default function Game() {
                 </div>
                 {% endif %}
             </div>
-            {% endif %}
+            {% endif %} */}
             <div id="prompt-container">
                 <form action="/submit_prompt" method="post">
                     <fieldset>
                         <div className="form-group">
-                        <label for="prompt" className="form-label mt-4">
-                            {% if not generated_images %}
-                            {% if prev_user_image_id %}
-                            Guess the prompt for {prev_user_name}'s image!
-                            {% else %}
-                            Enter your prompt!
-                            {% endif %}
-                            {% else %}
-                            Your prompt:
-                            {% endif %}
-                        </label>
-                        <textarea {% if generated_images %}disabled{% endif %} className="form-control" id="prompt" name="prompt" rows="3">{prompt}</textarea>
+                            <label for="prompt" className="form-label mt-4">
+                                {prompt}
+                            </label>
+                            <textarea disabled={ctx.generated_images} className="form-control" id="prompt" name="prompt" rows="3">{ctx.prompt}</textarea>
                         </div>
-                        {% if not generated_images %}
-                        <input type="hidden" name="user_id" value="{{user_id}}" />
-                        <input type="hidden" name="game_id" value="{{game_id}}" />
-                        <input type="hidden" name="drawn_for" value="{{drawn_for}}" />
-                        <label for="num_images" className="form-label mt-4">Select number of images to generate</label>
-                        <div id="submit-box-thing">
-                        <select className="form-select" id="num_images" name="num_images">
-                            <option>4</option>
-                            <option>3</option>
-                            <option>2</option>
-                            <option>1</option>
-                        </select>
-                        <button type="submit" className="btn btn-primary">Submit</button>
-                        {% endif %}
-                        </div>
+                            {!ctx.generated_images && 
+                                <>
+                                    <input type="hidden" name="user_id" value={ctx.user_id} />
+                                    <input type="hidden" name="game_id" value={ctx.game_id} />
+                                    <input type="hidden" name="drawn_for" value={ctx.drawn_for} />
+                                    <label for="num_images" className="form-label mt-4">Select number of images to generate</label>
+                                    <div id="submit-box-thing">
+                                        <select className="form-select" id="num_images" name="num_images">
+                                            <option>4</option>
+                                            <option>3</option>
+                                            <option>2</option>
+                                            <option>1</option>
+                                        </select>
+                                        <button type="submit" className="btn btn-primary">Submit</button>
+                                    </div>
+                                </>
+                            }
                     </fieldset>
                 </form>
             </div>
-            {% if wait %}
+            {/* {% if wait %}
             <h2>Please wait for images from your old prompt to finish being generated before submitting a new prompt</h2>
             {% endif %}
             {% if generated_images %}

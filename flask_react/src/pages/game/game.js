@@ -109,26 +109,34 @@ export default function Game() {
             <Typography>Game id: {ctx.game_id}</Typography>
             <Typography>Round number: {ctx.round_number + 1}</Typography>
 
-            {/* {% if prev_user_name or chosen_image_id %}
-            <div id="comparison_box" className="w-100">
-                {% if prev_user_name %}
-                    <div className="card image-width-css-stuff">
-                    <h4 className="card-title">{prev_user_name}'s image</h4>
-                    <a href="javascript:pop('img{{prev_user_image_id}}');">
-                        <img src="/images?id={{prev_user_image_id}}" className="w-100" />
-                    </a>
+            {
+                (ctx.prev_user_name || ctx.chosen_image_id) && 
+                <>
+                    <div id="comparison_box" className="w-100">
+                        {ctx.prev_user_name && 
+                            <>
+                                <div className="card image-width-css-stuff">
+                                    <h4 className="card-title">{ctx.prev_user_name}'s image</h4>
+                                    <a href="javascript:pop('img{{prev_user_image_id}}');">
+                                        <img src={`/images?id=${ctx.prev_user_image_id}`} className="w-100" />
+                                    </a>
+                                </div>
+                            </>
+                        }
+                        {ctx.chosen_image_id &&
+                            <>
+                                <div className="card image-width-css-stuff">
+                                    <h4 className="card-title">Chosen image</h4>
+                                    <a href="javascript:pop('img{{chosen_image_id}}');">
+                                        <img src={`/images?id=${ctx.chosen_image_id}`} className="w-100" />
+                                    </a>
+                                </div>
+                            </>
+                        }
                     </div>
-                {% endif %}
-                {% if chosen_image_id %}
-                <div className="card image-width-css-stuff">
-                    <h4 className="card-title">Chosen image</h4>
-                    <a href="javascript:pop('img{{chosen_image_id}}');">
-                    <img src="/images?id={{chosen_image_id}}" className="w-100" />
-                    </a>
-                </div>
-                {% endif %}
-            </div>
-            {% endif %} */}
+                </>
+            }
+
             <div id="prompt-container">
                 <form action="/submit_prompt" method="post">
                     <fieldset>
@@ -158,22 +166,26 @@ export default function Game() {
                     </fieldset>
                 </form>
             </div>
-            {/* {% if wait %}
-            <h2>Please wait for images from your old prompt to finish being generated before submitting a new prompt</h2>
-            {% endif %}
-            {% if generated_images %}
-                <h2>Images generated so far</h2>
-                <div id="images">
-                {% for img in images %}
-                <div className="card image-card-thingy">
-                <a href="javascript:pop('img{{img['id']}}');">
-                    <img className="image_thingy" id="img{{img['id']}}" src="/images?id={{img['id']}}" />
-                </a>
-                <a href="/choose_image?game_id={{game_id}}&user_id={{user_id}}&image_id={{img['id']}}">Choose</a>
-                </div>
-                {% endfor %}
-                </div>
-            {% endif %} */}
+            
+            {
+                ctx.wait && <h2>Please wait for images from your old prompt to finish being generated before submitting a new prompt</h2>
+            }
+            {
+                ctx.generated_images &&
+                <>
+                    <h2>Images generated so far</h2>
+                    <div id="images">
+                    {ctx.images.map(img => (
+                        <div className="card image-card-thingy">
+                        <a href="javascript:pop('img{{img['id']}}');">
+                            <img className="image_thingy" id="img{{img['id']}}" src="/images?id={{img['id']}}" />
+                        </a>
+                        <a href="/choose_image?game_id={{game_id}}&user_id={{user_id}}&image_id={{img['id']}}">Choose</a>
+                        </div>
+                    ))}
+                    </div>
+                </>
+            }
 
                 <div className="modal fade" id="imagemodal" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div className="modal-dialog" style={{display: "flex"}}>
@@ -184,8 +196,6 @@ export default function Game() {
                         </div>
                     </div>
                 </div>
-            </div>
-        // </div>
-        // </div>
+        </div>
     );
 }

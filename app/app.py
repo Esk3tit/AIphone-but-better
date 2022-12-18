@@ -156,7 +156,6 @@ def game():
             ctx['images'] = update_images(db=db, images_path=images_path, prompt=prompt, drawn_for=ctx['drawn_for'])
             ctx['generated_images'] = True
 
-        # return render_template('game.html', **ctx)
         return ctx
 
 @app.route("/submit_prompt", methods=['POST'])

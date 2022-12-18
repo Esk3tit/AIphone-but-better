@@ -16,6 +16,11 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -34,18 +39,30 @@ export const gameLoader = async ({ request }) => {
 
 export default function Game() {
 
+    /* <input type="hidden" name="user_id" value={ctx.user_id} />
+        <input type="hidden" name="game_id" value={ctx.game_id} />
+        <input type="hidden" name="drawn_for" value={ctx.drawn_for} />
+        GET THESE FROM THE CONTEXT FOR ON SUBMIT FORM FUNCTION DONT NEED AS INPUT
+    */
+    /* <label htmlFor="num_images" className="form-label mt-4">Select number of images to generate</label> */
+
     const gameContext = useLoaderData();
     const [ctx, setCtx] = useState(gameContext);
+    const [numImages, setNumImages] = useState(4);
 
     async function refresh() {
         const res = await axios.get("/game", { params: { user_id: ctx.user_id, game_id: ctx.game_id } });
         setCtx(res.data);
     }
 
+    const handleNumImagesChange = (event) => {
+        setNumImages(event.target.value);
+    };
+
     let prompt;
     if (!ctx.generated_images) {
         if (ctx.prev_user_image_id) {
-            prompt = `Guess the prompt for ${prev_user_name}'s image!`;
+            prompt = `Guess the prompt for ${ctx.prev_user_name}'s image!`;
         }
         else {
             prompt = "Enter your prompt:";
@@ -140,29 +157,44 @@ export default function Game() {
             <div id="prompt-container">
                 <form action="/submit_prompt" method="post">
                     <fieldset>
-                        <div className="form-group">
-                            <label for="prompt" className="form-label mt-4">
-                                {prompt}
-                            </label>
-                            <textarea disabled={ctx.generated_images} className="form-control" id="prompt" name="prompt" rows="3">{ctx.prompt}</textarea>
-                        </div>
-                            {!ctx.generated_images && 
-                                <>
-                                    <input type="hidden" name="user_id" value={ctx.user_id} />
-                                    <input type="hidden" name="game_id" value={ctx.game_id} />
-                                    <input type="hidden" name="drawn_for" value={ctx.drawn_for} />
-                                    <label for="num_images" className="form-label mt-4">Select number of images to generate</label>
-                                    <div id="submit-box-thing">
-                                        <select className="form-select" id="num_images" name="num_images">
-                                            <option>4</option>
-                                            <option>3</option>
-                                            <option>2</option>
-                                            <option>1</option>
-                                        </select>
-                                        <button type="submit" className="btn btn-primary">Submit</button>
-                                    </div>
-                                </>
-                            }
+                        <Grid2 container sx={{ m: '3px' }} rowSpacing={3} direction="column" alignItems="center" justifyContent="center">
+                            <Grid2 item sx={{ width: '99%' }}>
+                                <TextField
+                                    className='form-label mt-4'
+                                    label={prompt}
+                                    type="text"
+                                    multiline
+                                    rows={4}
+                                    variant="outlined"
+                                    sx={{ width: '100%' }}
+                                    >
+                                    {prompt}
+                                </TextField>
+                            </Grid2>
+                            <Grid2 item>
+                                {!ctx.generated_images && 
+                                    <FormControl id="submit-box-thing">
+                                        <InputLabel id="num-images-label">Select number of images to generate</InputLabel>
+                                        <Select
+                                            label="Select number of images to generate"
+                                            labelId="num-images-label"
+                                            id="num-images"
+                                            name="num_images"
+                                            className="form-select"
+                                            value={numImages}
+                                            onChange={handleNumImagesChange}
+                                            sx={{ width: 300 }}
+                                        >
+                                            <MenuItem value={4}>4</MenuItem>
+                                            <MenuItem value={3}>3</MenuItem>
+                                            <MenuItem value={2}>2</MenuItem>
+                                            <MenuItem value={1}>1</MenuItem>
+                                        </Select>
+                                        <Button sx={{ m: 1 }} variant="contained" type="submit" className="btn btn-primary">Submit</Button>
+                                    </FormControl>
+                                }
+                            </Grid2>
+                        </Grid2>
                     </fieldset>
                 </form>
             </div>

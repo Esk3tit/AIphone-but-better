@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { useState } from 'react';
 
 import axios from 'axios';
 
@@ -208,17 +208,18 @@ export default function Game() {
                     <h2>Images generated so far</h2>
                     <div id="images">
                     {ctx.images.map(img => (
-                        <div className="card image-card-thingy">
-                        <a href="javascript:pop('img{{img['id']}}');">
-                            <img className="image_thingy" id="img{{img['id']}}" src="/images?id={{img['id']}}" />
-                        </a>
-                        <a href="/choose_image?game_id={{game_id}}&user_id={{user_id}}&image_id={{img['id']}}">Choose</a>
+                        <div className="card image-card-thingy" key={`img${img['id']}`}>
+                            <a href={`javascript:pop('img${img['id']}');`}>
+                                <img className="image_thingy" id={`img${img['id']}`} src="/images?id={{img['id']}}" />
+                            </a>
+                            <a href={`/choose_image?game_id=${ctx.game_id}&user_id=${ctx.user_id}&image_id=${img['id']}`}>Choose</a>
                         </div>
                     ))}
                     </div>
                 </>
             }
-
+                {/* Probably can get rid of the following HTML stuff for Modal once we use MUI Modal since
+                    it probably has that stuff taken care of... */}
                 <div className="modal fade" id="imagemodal" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div className="modal-dialog" style={{display: "flex"}}>
                         <div className="modal-content w-100">

@@ -172,7 +172,11 @@ def submit_prompt():
         round_id = get_current_round_id(game_id, db)
         existing_turn = db.sql_fetchone('SELECT working FROM Turns WHERE user_id = ? AND round_id = ?', (user_id, round_id))
         if existing_turn and existing_turn[0]:
-            return redirect(f"/game?user_id={user_id}&game_id={game_id}&wait=1")
+            return {
+                "user_id": user_id,
+                "game_id": game_id,
+                "wait": 1
+            } 
         
         round_number = get_current_round_number(game_id, db)
         if not existing_turn:
@@ -188,7 +192,10 @@ def submit_prompt():
         for id in get_user_ids_for_game(game_id, db):
             socketio.send(f"{username} is generating their images", to=id)
 
-        return redirect(f"/game?user_id={user_id}&game_id={game_id}")
+        return {
+            "user_id": user_id,
+            "game_id": game_id,
+        } 
 
 @app.route("/choose_image")
 def choose_image():

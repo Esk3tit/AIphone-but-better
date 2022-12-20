@@ -47,6 +47,7 @@ export default function CreateGame({ gameId, setGameId }) {
                             value={numTurns}
                             name="num_turns"
                             disabled={gameId ? true : false}
+                            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                         />
                     </Grid2>
                     <Button variant="contained" disabled={gameId ? true : false} type="submit">New Game</Button>

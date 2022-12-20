@@ -27,7 +27,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import zIndex from '@mui/material/styles/zIndex';
 
 export const gameLoader = async ({ request }) => {
     const url = new URL(request.url);
@@ -39,16 +40,12 @@ export const gameLoader = async ({ request }) => {
 
 export default function Game() {
 
-    /* <input type="hidden" name="user_id" value={ctx.user_id} />
-        <input type="hidden" name="game_id" value={ctx.game_id} />
-        <input type="hidden" name="drawn_for" value={ctx.drawn_for} />
-        GET THESE FROM THE CONTEXT FOR ON SUBMIT FORM FUNCTION DONT NEED AS INPUT
-    */
     /* <label htmlFor="num_images" className="form-label mt-4">Select number of images to generate</label> */
 
     const gameContext = useLoaderData();
     const [ctx, setCtx] = useState(gameContext);
     const [numImages, setNumImages] = useState(4);
+    const navigate = useNavigate();
 
     async function refresh() {
         const res = await axios.get("/game", { params: { user_id: ctx.user_id, game_id: ctx.game_id } });
@@ -57,6 +54,41 @@ export default function Game() {
 
     const handleNumImagesChange = (event) => {
         setNumImages(event.target.value);
+    };
+
+    // Use prompt data from context and replace it with the textbox prompt value
+    // setCtx does merging of state, so we want to spread out previous ctx values
+    // to keep them the same and then just replace the prompt value only
+    const handlePromptChange = (event) => {
+        setCtx({ ...ctx, prompt: event.target.value });
+    };
+
+    const handleFormSubmit = async (event) => {
+        event.preventDefault();
+        const data = new URLSearchParams();
+        data.append("user_id", ctx.user_id);
+        data.append("game_id", ctx.game_id);
+        data.append("drawn_for", ctx.drawn_for);
+        data.append("num_images", numImages);
+        data.append("prompt", ctx.prompt);
+
+        const res = await axios.post("/submit_prompt", data, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+
+        console.log(res.data);
+        console.log("Curr CTX: ", ctx);
+
+        // Navigate depending on whether wait is set to 1 or not from submit prompt route
+        if ("wait" in res.data) {
+            navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}&wait=1`);
+        }
+        else {
+            navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}`);
+        }
+        setCtx(res.data);
     };
 
     let prompt;
@@ -80,7 +112,8 @@ export default function Game() {
                     position: "absolute",
                     top: "10px",
                     right: "10px",
-                    textAlign: "right"
+                    textAlign: "right",
+                    zIndex: 1
                 }
             }>
                 <AccordionSummary
@@ -155,7 +188,7 @@ export default function Game() {
             }
 
             <div id="prompt-container">
-                <form action="/submit_prompt" method="post">
+                <form onSubmit={handleFormSubmit}>
                     <fieldset>
                         <Grid2 container sx={{ m: '3px' }} rowSpacing={3} direction="column" alignItems="center" justifyContent="center">
                             <Grid2 item sx={{ width: '99%' }}>
@@ -167,9 +200,9 @@ export default function Game() {
                                     rows={4}
                                     variant="outlined"
                                     sx={{ width: '100%' }}
-                                    >
-                                    {prompt}
-                                </TextField>
+                                    value={ctx.prompt}
+                                    onChange={handlePromptChange}
+                                />
                             </Grid2>
                             <Grid2 item>
                                 {!ctx.generated_images && 

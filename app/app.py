@@ -2,12 +2,14 @@
 
 from flask import Flask, send_file, render_template, send_from_directory, request, redirect
 from flask_socketio import SocketIO, join_room, leave_room, send
+from flask_cors import CORS
 from config import DATA_PATH, FLASK_SECRET_KEY
 from game_db import GameDb
 from worker import Worker
 from util import update_images, get_images_path, get_current_round_id, get_current_round_number, get_user_ids_for_game
 
 app = Flask(__name__)
+CORS(app)
 app.config['SECRET_KEY'] = FLASK_SECRET_KEY
 socketio = SocketIO(app)
 worker = Worker(socketio)
@@ -125,7 +127,6 @@ def game():
                 user_round_info = [{'username': x[0], 'prompt': x[1], 'image_id': x[2]} for x in user_round_info_raw]
                 player_rounds_list += [{'username': current_user_name, 'rounds': user_round_info}]
             ctx['player_rounds_list'] = player_rounds_list
-            # return render_template('results.html', **ctx)
             return ctx
 
         # If not round 0, display the next user's thingamabob

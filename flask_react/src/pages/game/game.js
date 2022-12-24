@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import axios from 'axios';
+import io from 'socket.io-client';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -28,7 +29,8 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import zIndex from '@mui/material/styles/zIndex';
+
+const socket = io.connect('http://localhost:5000');
 
 export const gameLoader = async ({ request }) => {
     const url = new URL(request.url);
@@ -46,6 +48,13 @@ export default function Game() {
     const [ctx, setCtx] = useState(gameContext);
     const [numImages, setNumImages] = useState(4);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        socket.on('connect', () => {
+            console.log("Connected to socket");
+            socket.emit('join', { username: ctx.username, user_id: ctx.user_id });
+        });
+    }, []);
 
     async function refresh() {
         const res = await axios.get("/game", { params: { user_id: ctx.user_id, game_id: ctx.game_id } });
@@ -243,7 +252,7 @@ export default function Game() {
                     {ctx.images.map(img => (
                         <div className="card image-card-thingy" key={`img${img['id']}`}>
                             <a href={`javascript:pop('img${img['id']}');`}>
-                                <img className="image_thingy" id={`img${img['id']}`} src="/images?id={{img['id']}}" />
+                                <img className="image_thingy" id={`img${img['id']}`} src={`/images?id=${img['id']}`} />
                             </a>
                             <a href={`/choose_image?game_id=${ctx.game_id}&user_id=${ctx.user_id}&image_id=${img['id']}`}>Choose</a>
                         </div>

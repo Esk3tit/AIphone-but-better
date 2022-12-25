@@ -35,13 +35,13 @@ def on_join(data):
     leave_room(room)
     print(f"{username} left")
 
-@app.route("/")
-def index():
-    try:
-        game_id = request.args['game_id']
-        return render_template("login.html", game_id = game_id)
-    except KeyError as ex:
-        return render_template("login.html")
+# @app.route("/")
+# def index():
+#     try:
+#         game_id = request.args['game_id']
+#         return render_template("login.html", game_id = game_id)
+#     except KeyError as ex:
+#         return render_template("login.html")
 
 @app.route("/login", methods=['GET'])
 def login():

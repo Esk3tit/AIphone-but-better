@@ -41,5 +41,6 @@ class Worker:
 
     def enqueue_prompt(self, game_id, round_number, user_id, prompt: str, drawn_for: str, num_images: int = 4):
         # don't ask
+        print('enqueuing prompt')
         self.q.put('work pls')
         self.r.lpush('image_to_generate', json.dumps([game_id, round_number, user_id, prompt, drawn_for, num_images]))

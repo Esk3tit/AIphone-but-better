@@ -15,6 +15,7 @@ def gen_images(prompt: Sequence[str], num_images: int, dir_path: Path):
     dir_path.mkdir(parents=True, exist_ok=True)
     i = 0
     for img in pipe([prompt], num_images_per_prompt=num_images).images:
+        print(f"Saving image {i} to {dir_path}")
         # This has to be something other than just image_number.png because I'm too lazy to fix the other code
         img_path = dir_path.joinpath(f"{prompt[:20]}_{i}.png")
         img.save(img_path) 
@@ -24,12 +25,14 @@ def gen_images(prompt: Sequence[str], num_images: int, dir_path: Path):
 if __name__ == '__main__':
     while True:
         # Get image to generate
+        print('Processing prompts to generate images')
         _, data = r.blpop('image_to_generate')
         game_id, round_number, user_id, prompt, drawn_for, num_images = json.loads(data)
         # Generate image
         print(f"Generating images for:\nGame:\t{game_id}\nRound:\t{round_number}\nUser:\t{user_id}")
         dir_path = Path('data').joinpath(str(game_id)).joinpath(str(round_number)).joinpath(str(user_id))
         gen_images(prompt, num_images, dir_path)
+        print('Images generated')
         # Update flask with results
         r.lpush('flask_image_done', data)
         print('Sent update to redis')

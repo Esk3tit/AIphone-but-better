@@ -22,6 +22,7 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
+import Modal from '@mui/material/Modal';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -47,6 +48,7 @@ export default function Game() {
     const gameContext = useLoaderData();
     const [ctx, setCtx] = useState(gameContext);
     const [numImages, setNumImages] = useState(4);
+    const [modalOpen, setModalOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -55,6 +57,9 @@ export default function Game() {
             socket.emit('join', { username: ctx.username, user_id: ctx.user_id });
         });
     }, []);
+
+    const handleModalOpen = () => setModalOpen(true);
+    const handleModalClose = () => setModalOpen(false);
 
     async function refresh() {
         const res = await axios.get("/game", { params: { user_id: ctx.user_id, game_id: ctx.game_id } });
@@ -89,6 +94,7 @@ export default function Game() {
 
         console.log(res.data);
         console.log("Curr CTX: ", ctx);
+        setCtx(res.data);
 
         // Navigate depending on whether wait is set to 1 or not from submit prompt route
         if ("wait" in res.data) {
@@ -97,7 +103,7 @@ export default function Game() {
         else {
             navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}`);
         }
-        setCtx(res.data);
+        
     };
 
     let prompt;
@@ -176,9 +182,12 @@ export default function Game() {
                             <>
                                 <div className="card image-width-css-stuff">
                                     <h4 className="card-title">{ctx.prev_user_name}'s image</h4>
-                                    <a href="javascript:pop('img{{prev_user_image_id}}');">
-                                        <img src={`/images?id=${ctx.prev_user_image_id}`} className="w-100" />
-                                    </a>
+                                    <Modal
+                                        open={modalOpen}
+                                        onClose={handleModalClose}
+                                    >
+                                        <img src={`/images?id=${ctx.prev_user_image_id}`} onClick={handleModalOpen} className="w-100" />
+                                    </Modal>
                                 </div>
                             </>
                         }
@@ -186,9 +195,12 @@ export default function Game() {
                             <>
                                 <div className="card image-width-css-stuff">
                                     <h4 className="card-title">Chosen image</h4>
-                                    <a href="javascript:pop('img{{chosen_image_id}}');">
-                                        <img src={`/images?id=${ctx.chosen_image_id}`} className="w-100" />
-                                    </a>
+                                    <Modal
+                                        open={modalOpen}
+                                        onClose={handleModalClose}
+                                    >
+                                        <img src={`/images?id=${ctx.chosen_image_id}`} onClick={handleModalOpen} className="w-100" />
+                                    </Modal>
                                 </div>
                             </>
                         }
@@ -251,9 +263,12 @@ export default function Game() {
                     <div id="images">
                     {ctx.images.map(img => (
                         <div className="card image-card-thingy" key={`img${img['id']}`}>
-                            <a href={`javascript:pop('img${img['id']}');`}>
-                                <img className="image_thingy" id={`img${img['id']}`} src={`/images?id=${img['id']}`} />
-                            </a>
+                            <Modal
+                                open={modalOpen}
+                                onClose={handleModalClose}
+                            >
+                                <img className="image_thingy" id={`img${img['id']}`} onClick={handleModalOpen} src={`/images?id=${img['id']}`} />
+                            </Modal>
                             <a href={`/choose_image?game_id=${ctx.game_id}&user_id=${ctx.user_id}&image_id=${img['id']}`}>Choose</a>
                         </div>
                     ))}
@@ -262,7 +277,7 @@ export default function Game() {
             }
                 {/* Probably can get rid of the following HTML stuff for Modal once we use MUI Modal since
                     it probably has that stuff taken care of... */}
-                <div className="modal fade" id="imagemodal" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                {/* <div className="modal fade" id="imagemodal" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                     <div className="modal-dialog" style={{display: "flex"}}>
                         <div className="modal-content w-100">
                             <div className="modal-body w-100">
@@ -270,7 +285,7 @@ export default function Game() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
         </div>
     );
 }

@@ -11,6 +11,7 @@ from util import update_images, get_images_path, get_current_round_id, get_curre
 app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = FLASK_SECRET_KEY
+app.config['CORS_HEADERS'] = 'Content-Type'
 socketio = SocketIO(app, logger=True, engineio_logger=True)
 worker = Worker(socketio)
 

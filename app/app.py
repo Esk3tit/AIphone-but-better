@@ -9,7 +9,7 @@ from worker import Worker
 from util import update_images, get_images_path, get_current_round_id, get_current_round_number, get_user_ids_for_game
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['SECRET_KEY'] = FLASK_SECRET_KEY
 socketio = SocketIO(app, logger=True, engineio_logger=True)
 worker = Worker(socketio)

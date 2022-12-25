@@ -11,8 +11,12 @@ from util import update_images, get_images_path, get_current_round_id, get_curre
 app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = FLASK_SECRET_KEY
-socketio = SocketIO(app)
+socketio = SocketIO(app, logger=True, engineio_logger=True)
 worker = Worker(socketio)
+
+@socketio.on('connect')
+def on_connect():
+    print('connected')
 
 # Join users to rooms based on their user_id so that messages are sent to the correct places
 # This is probably the wrong way to use this but it works lol

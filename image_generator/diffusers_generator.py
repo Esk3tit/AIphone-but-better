@@ -12,6 +12,7 @@ pipe.to("cuda")
 
 
 def gen_images(prompt: Sequence[str], num_images: int, dir_path: Path):
+    print("In gen_images but haven't read from pipe yet...")
     dir_path.mkdir(parents=True, exist_ok=True)
     i = 0
     for img in pipe([prompt], num_images_per_prompt=num_images).images:
@@ -25,7 +26,6 @@ def gen_images(prompt: Sequence[str], num_images: int, dir_path: Path):
 if __name__ == '__main__':
     while True:
         # Get image to generate
-        print('Processing prompts to generate images')
         _, data = r.blpop('image_to_generate')
         game_id, round_number, user_id, prompt, drawn_for, num_images = json.loads(data)
         # Generate image

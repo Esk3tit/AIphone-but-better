@@ -13,7 +13,7 @@ CORS(app)
 app.config['SECRET_KEY'] = FLASK_SECRET_KEY
 app.config['CORS_HEADERS'] = 'Content-Type'
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
-worker = Worker(socketio)
+worker = Worker()
 
 @socketio.on('connect')
 def on_connect():

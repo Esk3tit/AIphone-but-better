@@ -1,4 +1,4 @@
-from flask_socketio import SocketIO
+from threading import Thread
 import eventlet
 import redis
 import json
@@ -12,12 +12,14 @@ eventlet.monkey_patch()
 
 
 class Worker:
-    def __init__(self, socketio: SocketIO) -> None:
+    def __init__(self) -> None:
         self.q = eventlet.Queue()
         self.r = redis.Redis(host=os.environ.get('REDIS_HOST', 'localhost'))
-        self.w = socketio.start_background_task(target=self.worker, socketio=socketio)
+        self.w = Thread(daemon=True, target=self.worker, name="Image Storing Worker")
+        print("Starting worker thread")
+        self.w.start()
 
-    def worker(self, socketio) -> None:
+    def worker(self) -> None:
         print('starting worker...')
         while True:
             # this is necessary for some reason. ugh.
@@ -36,7 +38,7 @@ class Worker:
             
             # Notify clients that images have been generated
             print('Done generating images, sending reload message via web socket')
-            socketio.emit('reload', 'reload', to=user_id)
+            # PUT ANOTHER Q LIST HERE FOR REACT TO RELOAD PAGE AUTOMATICALLY AFTER IMAGES ARE GENERATED
             self.q.task_done()
 
     def enqueue_prompt(self, game_id, round_number, user_id, prompt: str, drawn_for: str, num_images: int = 4):

@@ -62,6 +62,7 @@ export default function Game() {
     const handleModalClose = () => setModalOpen(false);
 
     async function refresh() {
+        console.log("Context before refresh: ", ctx)
         const res = await axios.get("/game", { params: { user_id: ctx.user_id, game_id: ctx.game_id } });
         setCtx(res.data);
     }
@@ -74,7 +75,7 @@ export default function Game() {
     // setCtx does merging of state, so we want to spread out previous ctx values
     // to keep them the same and then just replace the prompt value only
     const handlePromptChange = (event) => {
-        setCtx({ ...ctx, prompt: event.target.value });
+        setCtx(prevCtx => { return {...prevCtx, prompt: event.target.value} });
     };
 
     const handleFormSubmit = async (event) => {
@@ -92,9 +93,7 @@ export default function Game() {
             }
         });
 
-        console.log(res.data);
-        console.log("Curr CTX: ", ctx);
-        setCtx(res.data);
+        await refresh();
 
         // Navigate depending on whether wait is set to 1 or not from submit prompt route
         if ("wait" in res.data) {

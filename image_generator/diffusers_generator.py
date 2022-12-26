@@ -32,7 +32,6 @@ if __name__ == '__main__':
         print(f"Generating images for:\nGame:\t{game_id}\nRound:\t{round_number}\nUser:\t{user_id}")
         dir_path = Path('data').joinpath(str(game_id)).joinpath(str(round_number)).joinpath(str(user_id))
         gen_images(prompt, num_images, dir_path)
-        print('Images generated')
         # Update flask with results
         r.lpush('flask_image_done', data)
         print('Sent update to redis')

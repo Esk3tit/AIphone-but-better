@@ -19,6 +19,7 @@ services:
       - redis
     environment:
       - REDIS_HOST=redis
+      - PYTHONUNBUFFERED=1
 
   image_generator:
     user: "${UID}:${GID}"
@@ -37,6 +38,7 @@ services:
       - redis
     environment:
       - REDIS_HOST=redis
+      - PYTHONUNBUFFERED=1
     deploy:
       resources:
         reservations:

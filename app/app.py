@@ -96,12 +96,16 @@ def game():
     with GameDb() as db:
         round_id = get_current_round_id(game_id, db)
         round_number = get_current_round_number(game_id, db)
+        print("Adding username to ctx")
         ctx['username'] = db.sql_fetchone('SELECT username FROM Users WHERE id = ?', (user_id,))[0]
+        print("Adding round_number to ctx")
         ctx['round_number'] = round_number
+        print("Adding drawn_for to ctx")
         ctx['drawn_for'] = user_id
         user_ids = db.sql_fetchall('SELECT user_id, username FROM Players INNER JOIN Users ON Players.user_id = Users.id WHERE game_id = ?', (game_id,))
 
         # Get status for each player
+        print("Getting all_players_info")
         ctx['all_players_info'] = []
         for user in user_ids:
             current_user_id, current_user_name = user
@@ -120,6 +124,7 @@ def game():
         # If round number is equal to number of rounds, display results
         num_rounds = db.sql_fetchone('SELECT num_turns FROM Games WHERE id = ?', (game_id,))[0]
         if round_number == num_rounds:
+            print("Getting player_rounds_list and ending game since all rounds are done")
             player_rounds_list = []
             for user in (x[0] for x in user_ids):
                 current_user_name = db.sql_fetchone('SELECT username FROM Users WHERE id = ?', (user,))[0]
@@ -146,9 +151,11 @@ def game():
                 prev_user = user_ids[i]
                 i += 1
             prev_user_id, prev_user_name = prev_user
+            print("Getting drawn_for for next round")
             ctx['drawn_for'] = user_ids[(i - round_number) % len(user_ids)][0]
+            print("Getting prev_user_name for next round")
             ctx['prev_user_name'] = prev_user_name
-
+            print("Getting prev_user_image_id for next round")
             ctx['prev_user_image_id'] = db.sql_fetchone('SELECT image_id FROM Turns INNER JOIN Rounds ON Turns.round_id = Rounds.id WHERE round_number = ? AND user_id = ? AND game_id = ?', (round_number - 1, prev_user_id, game_id))[0]
 
         # Check if user is waiting on queue
@@ -157,11 +164,14 @@ def game():
             prompt, ready, image_id = turn_info
             if not ready:
                 image_id = None
+
+            print("Getting prompt, ready, and chosen_image_id for next round")
             ctx['prompt'] = prompt
             ctx['ready'] = ready
             ctx['chosen_image_id'] = image_id
         
             # Get images
+            print("Getting images (probably broken lol)")
             images_path = get_images_path(game_id=game_id, round_number=round_number, user_id=user_id)
             ctx['images'] = update_images(db=db, images_path=images_path, prompt=prompt, drawn_for=ctx['drawn_for'])
             ctx['generated_images'] = True

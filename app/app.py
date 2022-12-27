@@ -161,7 +161,8 @@ def game():
             images_path = get_images_path(game_id=game_id, round_number=round_number, user_id=user_id)
             ctx['images'] = update_images(db=db, images_path=images_path, prompt=prompt, drawn_for=ctx['drawn_for'])
             ctx['generated_images'] = True
-
+        
+        print(ctx)
         return ctx
 
 @app.route("/submit_prompt", methods=['POST'])

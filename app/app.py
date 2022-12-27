@@ -132,6 +132,8 @@ def game():
                 user_round_info = [{'username': x[0], 'prompt': x[1], 'image_id': x[2]} for x in user_round_info_raw]
                 player_rounds_list += [{'username': current_user_name, 'rounds': user_round_info}]
             ctx['player_rounds_list'] = player_rounds_list
+            
+            print(ctx)
             return ctx
 
         # If not round 0, display the next user's thingamabob

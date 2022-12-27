@@ -140,6 +140,7 @@ def game():
                 player_rounds_list += [{'username': current_user_name, 'rounds': user_round_info}]
             ctx['player_rounds_list'] = player_rounds_list
             
+            print("Context for results round: ", ctx)
             logging.debug(f'Context dict returned for results round: {ctx}')
             return ctx
 
@@ -176,6 +177,7 @@ def game():
             ctx['images'] = update_images(db=db, images_path=images_path, prompt=prompt, drawn_for=ctx['drawn_for'])
             ctx['generated_images'] = True
         
+        print("Context for regular round: ", ctx)
         logging.debug(f'Context dict returned for regular round: {ctx}')
         return ctx
 

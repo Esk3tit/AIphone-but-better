@@ -8,6 +8,8 @@ from game_db import GameDb
 from worker import Worker
 from util import update_images, get_images_path, get_current_round_id, get_current_round_number, get_user_ids_for_game
 
+import logging
+
 app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = FLASK_SECRET_KEY
@@ -133,7 +135,7 @@ def game():
                 player_rounds_list += [{'username': current_user_name, 'rounds': user_round_info}]
             ctx['player_rounds_list'] = player_rounds_list
             
-            print(ctx)
+            logging.debug(f'Context dict returned for results round: {ctx}')
             return ctx
 
         # If not round 0, display the next user's thingamabob
@@ -164,7 +166,7 @@ def game():
             ctx['images'] = update_images(db=db, images_path=images_path, prompt=prompt, drawn_for=ctx['drawn_for'])
             ctx['generated_images'] = True
         
-        print(ctx)
+        logging.debug(f'Context dict returned for regular round: {ctx}')
         return ctx
 
 @app.route("/submit_prompt", methods=['POST'])

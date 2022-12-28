@@ -23,11 +23,15 @@ import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Modal from '@mui/material/Modal';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+
+import './game.css';
 
 import { useLoaderData, useNavigate } from 'react-router-dom';
 
@@ -260,32 +264,25 @@ export default function Game() {
                 ctx.generated_images &&
                 <>
                     <h2>Images generated so far</h2>
-                    <div id="images">
+                    <ImageList id="images" cols={4}>
                     {ctx.images.map(img => (
-                        <div className="card image-card-thingy" key={`img${img['id']}`}>
+                        <ImageListItem className="card image-card-thingy" key={`img${img['id']}`} sx={{
+                            width: 200,
+                            height: 200,
+                        }}>
                             <Modal
                                 open={modalOpen}
                                 onClose={handleModalClose}
                             >
-                                <img className="image_thingy" id={`img${img['id']}`} onClick={handleModalOpen} src={`/images?id=${img['id']}`} />
+                                <img className="image_thingy_modal" id={`img${img['id']}`} src={`/images?id=${img['id']}`} />
                             </Modal>
+                            <img className="image_thingy" id={`img${img['id']}`} onClick={handleModalOpen} src={`/images?id=${img['id']}`} />
                             <a href={`/choose_image?game_id=${ctx.game_id}&user_id=${ctx.user_id}&image_id=${img['id']}`}>Choose</a>
-                        </div>
+                        </ImageListItem>
                     ))}
-                    </div>
+                    </ImageList>
                 </>
             }
-                {/* Probably can get rid of the following HTML stuff for Modal once we use MUI Modal since
-                    it probably has that stuff taken care of... */}
-                {/* <div className="modal fade" id="imagemodal" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div className="modal-dialog" style={{display: "flex"}}>
-                        <div className="modal-content w-100">
-                            <div className="modal-body w-100">
-                                <img src="" className="w-100" id="imagepreview" />
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
         </div>
     );
 }

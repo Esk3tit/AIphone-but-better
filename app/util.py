@@ -35,8 +35,6 @@ def update_images(images_path: Path, prompt: str, drawn_for: str, db: GameDb) ->
         else:
             image_id = db.sql_fetchone('SELECT id FROM Images WHERE path = ?', (str(new_path),))[0]
 
-        print(type(image_id), image_id)
-        print(type(new_path.as_posix()), new_path.as_posix())
         imgs += [{'id': image_id, 'path': new_path.as_posix()}]
     
     return imgs

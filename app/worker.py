@@ -37,8 +37,8 @@ class Worker:
                 update_images(images_path=images_path, prompt=prompt, drawn_for=drawn_for, db=db)
             
             # Notify clients that images have been generated
-            print('Done generating images, sending reload message via web socket')
-            # PUT ANOTHER Q LIST HERE FOR REACT TO RELOAD PAGE AUTOMATICALLY AFTER IMAGES ARE GENERATED
+            print('Done generating images, sending reload message via React specific redis list')
+            self.r.rpush('react_image_done', json.dumps([game_id, round_number, user_id, prompt, drawn_for, num_images]))
             self.q.task_done()
 
     def enqueue_prompt(self, game_id, round_number, user_id, prompt: str, drawn_for: str, num_images: int = 4):

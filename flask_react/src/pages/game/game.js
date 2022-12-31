@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import axios from 'axios';
 import io from 'socket.io-client';
+import { createWorkerFactory, useWorker } from '@shopify/react-web-worker';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -36,6 +37,7 @@ import './game.css';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 
 const socket = io.connect('http://localhost:5000');
+const createWorker = createWorkerFactory(() => import('../../worker/reload-image.js'));
 
 export const gameLoader = async ({ request }) => {
     const url = new URL(request.url);
@@ -47,13 +49,12 @@ export const gameLoader = async ({ request }) => {
 
 export default function Game() {
 
-    /* <label htmlFor="num_images" className="form-label mt-4">Select number of images to generate</label> */
-
     const gameContext = useLoaderData();
     const [ctx, setCtx] = useState(gameContext);
     const [numImages, setNumImages] = useState(4);
     const [modalOpen, setModalOpen] = useState(false);
     const navigate = useNavigate();
+    const worker = useWorker(createWorker);
 
     useEffect(() => {
         socket.on('connect', () => {
@@ -100,7 +101,17 @@ export default function Game() {
 
         await refresh();
 
+        // IIFE to reload image in bg with web worker
+        (async () => {
+            await worker.reloadImage({ game_id: ctx.game_id, round_number: ctx.round_number, user_id: ctx.user_id, prompt: ctx.prompt, drawn_for: ctx.drawn_for, num_images: numImages });
+            console.log("Reloading page after image is done");
+            await refresh();
+        })();
+
         // Navigate depending on whether wait is set to 1 or not from submit prompt route
+        // Can probably remove this since we aren't using the wait property and we are already on the route
+        // anyways when this code runs, and refreshing is handled by other code so navigating here again doesn't
+        // do anything except cause a reload that we don't need...
         if ("wait" in res.data) {
             navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}&wait=1`);
         }

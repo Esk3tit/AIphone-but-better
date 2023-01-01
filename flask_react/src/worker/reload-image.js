@@ -1,12 +1,7 @@
-import { createClient } from "redis";
+import axios from "axios";
 
 export async function reloadImage(img_ctx) {
   console.log("Starting reloading of images in web worker");
-  const client = createClient();
-
-  client.on("error", (err) => console.log("Redis client error in web worker", err));
-
-  await client.connect();
 
   // Convert image context to JSON string
   const img_ctx_json = JSON.stringify(img_ctx);

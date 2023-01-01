@@ -8,8 +8,6 @@ from game_db import GameDb
 from worker import Worker
 from util import update_images, get_images_path, get_current_round_id, get_current_round_number, get_user_ids_for_game
 
-import logging
-
 app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = FLASK_SECRET_KEY

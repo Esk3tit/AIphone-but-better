@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import axios from "axios";
 import io from "socket.io-client";
@@ -52,6 +52,7 @@ export const gameLoader = async ({ request }) => {
 };
 
 export default function Game() {
+
   const gameContext = useLoaderData();
   const [ctx, setCtx] = useState(gameContext);
   const [numImages, setNumImages] = useState(4);
@@ -59,24 +60,29 @@ export default function Game() {
   const navigate = useNavigate();
   const worker = useWorker(createWorker);
 
-  useEffect(() => {
-    socket.on("connect", () => {
-      console.log("Connected to socket");
-      socket.emit("join", { username: ctx.username, user_id: ctx.user_id });
-    });
-  }, []);
-
-  const handleModalOpen = () => setModalOpen(true);
-  const handleModalClose = () => setModalOpen(false);
-
-  async function refresh() {
+  const refresh = useCallback(async () => {
     console.log("Context before refresh: ", ctx);
     const res = await axios.get("/game", {
       params: { user_id: ctx.user_id, game_id: ctx.game_id },
     });
     console.log("Context after refresh/returned from refresh: ", res.data);
     setCtx(res.data);
-  }
+  }, [ctx]);
+
+  useEffect(() => {
+    socket.on("connect", (sock) => {
+      console.log("Connected to socket", sock);
+      socket.emit("join", { username: ctx.username, user_id: ctx.user_id });
+    });
+
+    socket.on("reload", (msg) => {
+      console.log("Received reload message from socket:", msg);
+      refresh();
+    });
+  }, [refresh]);
+
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
 
   const handleNumImagesChange = (event) => {
     setNumImages(event.target.value);

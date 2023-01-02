@@ -6,20 +6,20 @@ import os
 
 from game_db import GameDb
 from util import get_current_round_id, get_images_path, update_images, get_user_ids_for_game
-
+from flask_socketio import SocketIO
 
 eventlet.monkey_patch()
 
 
 class Worker:
-    def __init__(self) -> None:
+    def __init__(self, socketio: SocketIO) -> None:
         self.q = eventlet.Queue()
         self.r = redis.Redis(host=os.environ.get('REDIS_HOST', 'localhost'))
-        self.w = Thread(daemon=True, target=self.worker, name="Image Storing Worker")
+        self.w = Thread(daemon=True, target=self.worker, args=(socketio,), name="Image Storing Worker")
         print("Starting worker thread")
         self.w.start()
 
-    def worker(self) -> None:
+    def worker(self, socketio) -> None:
         print('starting worker...')
         while True:
             # this is necessary for some reason. ugh.
@@ -37,8 +37,8 @@ class Worker:
                 update_images(images_path=images_path, prompt=prompt, drawn_for=drawn_for, db=db)
             
             # Notify clients that images have been generated
-            print('Done generating images, sending reload message via React specific redis list')
-            self.r.rpush('react_image_done', json.dumps([game_id, round_number, user_id, prompt, drawn_for, num_images]))
+            print('Done generating images, sending reload message via socketio')
+            socketio.emit('reload', to=user_id)
             self.q.task_done()
 
     def enqueue_prompt(self, game_id, round_number, user_id, prompt: str, drawn_for: str, num_images: int = 4):

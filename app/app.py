@@ -15,26 +15,21 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
 worker = Worker()
 
-@socketio.on('connect')
-def on_connect():
-    print('connected')
-
 # Join users to rooms based on their user_id so that messages are sent to the correct places
 # This is probably the wrong way to use this but it works lol
 @socketio.on('join')
 def on_join(data):
     username = data['username']
     room = data['user_id']
-    print(f"{username} joined")
     join_room(room)
     print(f"{username} joined room {room}")
 
 @socketio.on('leave')
-def on_join(data):
+def on_leave(data):
     username = data['username']
     room = data['user_id']
     leave_room(room)
-    print(f"{username} left")
+    print(f"{username} left room {room}")
 
 @app.route("/login", methods=['GET'])
 def login():

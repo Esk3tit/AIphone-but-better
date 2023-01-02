@@ -13,7 +13,7 @@ CORS(app)
 app.config['SECRET_KEY'] = FLASK_SECRET_KEY
 app.config['CORS_HEADERS'] = 'Content-Type'
 socketio = SocketIO(app, cors_allowed_origins="*", logger=True, engineio_logger=True)
-worker = Worker()
+worker = Worker(socketio)
 
 # Join users to rooms based on their user_id so that messages are sent to the correct places
 # This is probably the wrong way to use this but it works lol

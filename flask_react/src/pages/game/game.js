@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 
 import axios from "axios";
 import io from "socket.io-client";
-import { createWorkerFactory, useWorker } from "@shopify/react-web-worker";
 
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -36,11 +35,6 @@ import "./game.css";
 
 import { useLoaderData, useNavigate } from "react-router-dom";
 
-const socket = io.connect("http://localhost:5000");
-const createWorker = createWorkerFactory(() =>
-  import("../../worker/reload-image.js")
-);
-
 export const gameLoader = async ({ request }) => {
   const url = new URL(request.url);
   const user_id = url.searchParams.get("user_id");
@@ -58,7 +52,6 @@ export default function Game() {
   const [numImages, setNumImages] = useState(4);
   const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
-  const worker = useWorker(createWorker);
 
   const refresh = useCallback(async () => {
     console.log("Context before refresh: ", ctx);
@@ -70,8 +63,16 @@ export default function Game() {
   }, [ctx]);
 
   useEffect(() => {
-    socket.on("connect", (sock) => {
-      console.log("Connected to socket", sock);
+
+    const socket = io.connect("http://localhost:5000", {
+      transports: ["websocket"],
+      cors: {
+        origin: "http://localhost:3000/",
+      },
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected to socket");
       socket.emit("join", { username: ctx.username, user_id: ctx.user_id });
     });
 
@@ -79,7 +80,18 @@ export default function Game() {
       console.log("Received reload message from socket:", msg);
       refresh();
     });
-  }, [refresh]);
+
+    socket.on('pong', () => {
+      console.log(`Received pong from socket at ${new Date().toISOString()}`);
+    });
+
+    return () => {
+      socket.off('connect');
+      socket.off('reload');
+      socket.off('pong');
+    };
+
+  }, []);
 
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
@@ -113,20 +125,6 @@ export default function Game() {
     });
 
     await refresh();
-
-    // IIFE to reload image in bg with web worker
-    (async () => {
-      await worker.reloadImage({
-        game_id: ctx.game_id,
-        round_number: ctx.round_number,
-        user_id: ctx.user_id,
-        prompt: ctx.prompt,
-        drawn_for: ctx.drawn_for,
-        num_images: numImages,
-      });
-      console.log("Reloading page after image is done");
-      await refresh();
-    })();
 
     // Navigate depending on whether wait is set to 1 or not from submit prompt route
     // Can probably remove this since we aren't using the wait property and we are already on the route

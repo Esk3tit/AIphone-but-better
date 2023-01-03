@@ -379,11 +379,7 @@ export default function Game() {
                   onClick={handleModalOpen}
                   src={`/images?id=${img["id"]}`}
                 />
-                <a
-                  href={`/choose_image?game_id=${ctx.game_id}&user_id=${ctx.user_id}&image_id=${img["id"]}`}
-                >
-                  Choose
-                </a>
+                <Button variant="text" onClick={() => handleImageSubmit(img["id"])}>Choose Image</Button>
               </ImageListItem>
             ))}
           </ImageList>
@@ -395,7 +391,7 @@ export default function Game() {
         autoHideDuration={6000} 
         onClose={handleSnackBarClose}
         TransitionProps={{
-          onExited: handleSnackBarExit,
+          onExited: handleSnackBarExited,
         }}
       >
         <Alert onClose={handleSnackBarClose} severity="info">

@@ -25,6 +25,8 @@ import InputLabel from "@mui/material/InputLabel";
 import Modal from "@mui/material/Modal";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
@@ -51,6 +53,9 @@ export default function Game() {
   const [ctx, setCtx] = useState(gameContext);
   const [numImages, setNumImages] = useState(4);
   const [modalOpen, setModalOpen] = useState(false);
+  const [snackPack, setSnackPack] = useState([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState(undefined);
   const navigate = useNavigate();
 
   const refresh = useCallback(async () => {
@@ -85,13 +90,32 @@ export default function Game() {
       console.log(`Received pong from socket at ${new Date().toISOString()}`);
     });
 
+    socket.on('message', (msg) => {
+      console.log(`Received message from socket: ${msg}`);
+      setSnackbarMessage(msg);
+      handleSnackBarOpen(msg);
+    });
+
     return () => {
       socket.off('connect');
       socket.off('reload');
       socket.off('pong');
+      socket.off('message');
     };
 
   }, []);
+
+  useEffect(() => {
+    if (snackPack.length && !snackbarMessage) {
+      // Set a new snack when we don't have an active one
+      setSnackbarMessage({ ...snackPack[0] });
+      setSnackPack((prev) => prev.slice(1));
+      setSnackbarOpen(true);
+    } else if (snackPack.length && snackbarMessage && snackbarOpen) {
+      // Close an active snack when a new one is added
+      setSnackbarOpen(false);
+    }
+  }, [snackPack, snackbarMessage, snackbarOpen]);
 
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
@@ -108,6 +132,12 @@ export default function Game() {
       return { ...prevCtx, prompt: event.target.value };
     });
   };
+
+  const handleSnackBarOpen = (message) => {
+    setSnackPack((prev) => [...prev, { message, key: new Date().getTime() }]);
+  };
+  const handleSnackBarClose = () => setSnackbarOpen(false);
+  const handleSnackBarExited = () => setSnackbarMessage(undefined);
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -137,6 +167,11 @@ export default function Game() {
     } else {
       navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}`);
     }
+  };
+
+  const handleImageSubmit = async (img_id) => {
+    await axios.get("/choose_image", { params: { user_id: ctx.user_id, game_id: ctx.game_id, image_id: img_id } });
+    navigate(`/game?user_id=${ctx.user_id}&game_id=${ctx.game_id}`);
   };
 
   let prompt;
@@ -354,6 +389,19 @@ export default function Game() {
           </ImageList>
         </>
       )}
+      <Snackbar
+        key={snackbarMessage ? snackbarMessage.key : undefined}
+        open={snackbarOpen}
+        autoHideDuration={6000} 
+        onClose={handleSnackBarClose}
+        TransitionProps={{
+          onExited: handleSnackBarExit,
+        }}
+      >
+        <Alert onClose={handleSnackBarClose} severity="info">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

@@ -229,7 +229,7 @@ def choose_image():
             for id in get_user_ids_for_game(game_id, db):
                 socketio.emit('reload', 'reload', to=id)
 
-    return redirect(f"/game?user_id={user_id}&game_id={game_id}")
+    return ("", 204)
 
 @app.route('/images')
 def send_image():

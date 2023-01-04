@@ -59,7 +59,6 @@ export default function Game() {
   const navigate = useNavigate();
 
   const refresh = useCallback(async () => {
-    console.log("Context before refresh: ", ctx);
     const res = await axios.get("/game", {
       params: { user_id: ctx.user_id, game_id: ctx.game_id },
     });
@@ -261,10 +260,14 @@ export default function Game() {
                   <Modal open={modalOpen} onClose={handleModalClose}>
                     <img
                       src={`/images?id=${ctx.prev_user_image_id}`}
-                      onClick={handleModalOpen}
                       className="w-100"
                     />
                   </Modal>
+                  <img
+                      src={`/images?id=${ctx.prev_user_image_id}`}
+                      onClick={handleModalOpen}
+                      className="w-100"
+                    />
                 </div>
               </>
             )}
@@ -275,10 +278,14 @@ export default function Game() {
                   <Modal open={modalOpen} onClose={handleModalClose}>
                     <img
                       src={`/images?id=${ctx.chosen_image_id}`}
-                      onClick={handleModalOpen}
                       className="w-100"
                     />
                   </Modal>
+                  <img
+                      src={`/images?id=${ctx.chosen_image_id}`}
+                      onClick={handleModalOpen}
+                      className="w-100"
+                    />
                 </div>
               </>
             )}

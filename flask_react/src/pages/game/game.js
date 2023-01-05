@@ -91,7 +91,6 @@ export default function Game() {
 
     socket.on('message', (msg) => {
       console.log(`Received message from socket: ${msg}`);
-      setSnackbarMessage(msg);
       handleSnackBarOpen(msg);
     });
 
@@ -402,7 +401,7 @@ export default function Game() {
         }}
       >
         <Alert onClose={handleSnackBarClose} severity="info">
-          {snackbarMessage}
+          {snackbarMessage? snackbarMessage.message : undefined}
         </Alert>
       </Snackbar>
     </div>

@@ -92,6 +92,7 @@ export default function Game() {
     socket.on('message', (msg) => {
       console.log(`Received message from socket: ${msg}`);
       handleSnackBarOpen(msg);
+      refresh();
     });
 
     return () => {
@@ -170,6 +171,7 @@ export default function Game() {
   const handleImageSubmit = async (img_id) => {
     await axios.get("/choose_image", { params: { user_id: ctx.user_id, game_id: ctx.game_id, image_id: img_id } });
     navigate(`/game?user_id=${ctx.user_id}&game_id=${ctx.game_id}`);
+    refresh();
   };
 
   let prompt;
@@ -259,13 +261,13 @@ export default function Game() {
                   <Modal open={modalOpen} onClose={handleModalClose}>
                     <img
                       src={`/images?id=${ctx.prev_user_image_id}`}
-                      className="w-100"
+                      className="image_thingy_modal"
                     />
                   </Modal>
                   <img
                       src={`/images?id=${ctx.prev_user_image_id}`}
                       onClick={handleModalOpen}
-                      className="w-100"
+                      className="image_thingy"
                     />
                 </div>
               </>
@@ -277,13 +279,13 @@ export default function Game() {
                   <Modal open={modalOpen} onClose={handleModalClose}>
                     <img
                       src={`/images?id=${ctx.chosen_image_id}`}
-                      className="w-100"
+                      className="image_thingy_modal"
                     />
                   </Modal>
                   <img
                       src={`/images?id=${ctx.chosen_image_id}`}
                       onClick={handleModalOpen}
-                      className="w-100"
+                      className="image_thingy"
                     />
                 </div>
               </>

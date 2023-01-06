@@ -53,6 +53,7 @@ export default function Game() {
   const [ctx, setCtx] = useState(gameContext);
   const [numImages, setNumImages] = useState(4);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalImage, setModalImage] = useState(undefined);
   const [snackPack, setSnackPack] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState(undefined);
@@ -80,13 +81,9 @@ export default function Game() {
       socket.emit("join", { username: ctx.username, user_id: ctx.user_id });
     });
 
-    socket.on("reload", (msg) => {
-      console.log("Received reload message from socket:", msg);
+    socket.on("reload", () => {
+      console.log("Received reload message from socket");
       refresh();
-    });
-
-    socket.on('pong', () => {
-      console.log(`Received pong from socket at ${new Date().toISOString()}`);
     });
 
     socket.on('message', (msg) => {
@@ -98,7 +95,6 @@ export default function Game() {
     return () => {
       socket.off('connect');
       socket.off('reload');
-      socket.off('pong');
       socket.off('message');
     };
 
@@ -116,8 +112,14 @@ export default function Game() {
     }
   }, [snackPack, snackbarMessage, snackbarOpen]);
 
-  const handleModalOpen = () => setModalOpen(true);
-  const handleModalClose = () => setModalOpen(false);
+  const handleModalOpen = (img_id) => {
+    setModalImage(img_id);
+    setModalOpen(true);
+  };
+  const handleModalClose = () => {
+    setModalImage(undefined);
+    setModalOpen(false);
+  };
 
   const handleNumImagesChange = (event) => {
     setNumImages(event.target.value);
@@ -257,17 +259,19 @@ export default function Game() {
             {ctx.prev_user_name && (
               <>
                 <div className="card image-width-css-stuff">
-                  <h4 className="card-title">{ctx.prev_user_name}'s image</h4>
-                  <Modal open={modalOpen} onClose={handleModalClose}>
+                  <Typography variant="subtitle2" className="card-title">{ctx.prev_user_name}'s image</Typography>
+                  <Modal open={modalOpen && modalImage === ctx.prev_user_image_id} onClose={handleModalClose}>
                     <img
                       src={`/images?id=${ctx.prev_user_image_id}`}
                       className="image_thingy_modal"
+                      alt={`img${ctx.prev_user_image_id}`}
                     />
                   </Modal>
                   <img
                       src={`/images?id=${ctx.prev_user_image_id}`}
-                      onClick={handleModalOpen}
+                      onClick={() => handleModalOpen(ctx.prev_user_image_id)}
                       className="image_thingy"
+                      alt={`img${ctx.prev_user_image_id}`}
                     />
                 </div>
               </>
@@ -275,17 +279,19 @@ export default function Game() {
             {ctx.chosen_image_id && (
               <>
                 <div className="card image-width-css-stuff">
-                  <h4 className="card-title">Chosen image</h4>
-                  <Modal open={modalOpen} onClose={handleModalClose}>
+                  <Typography variant="subtitle2" className="card-title">Chosen image</Typography>
+                  <Modal open={modalOpen && modalImage === ctx.chosen_image_id} onClose={handleModalClose}>
                     <img
                       src={`/images?id=${ctx.chosen_image_id}`}
                       className="image_thingy_modal"
+                      alt={`img${ctx.chosen_image_id}`}
                     />
                   </Modal>
                   <img
                       src={`/images?id=${ctx.chosen_image_id}`}
-                      onClick={handleModalOpen}
+                      onClick={() => handleModalOpen(ctx.chosen_image_id)}
                       className="image_thingy"
+                      alt={`img${ctx.chosen_image_id}`}
                     />
                 </div>
               </>
@@ -356,14 +362,14 @@ export default function Game() {
       </div>
 
       {ctx.wait && (
-        <h2>
+        <Typography variant="h6">
           Please wait for images from your old prompt to finish being generated
           before submitting a new prompt
-        </h2>
+        </Typography>
       )}
       {ctx.generated_images && (
         <>
-          <h2>Images generated so far</h2>
+          <Typography variant="h6">Images generated so far</Typography>
           <ImageList id="images" cols={4}>
             {ctx.images.map((img) => (
               <ImageListItem
@@ -374,18 +380,20 @@ export default function Game() {
                   height: 200,
                 }}
               >
-                <Modal open={modalOpen} onClose={handleModalClose}>
+                <Modal open={modalOpen && modalImage === img["id"]} onClose={handleModalClose}>
                   <img
                     className="image_thingy_modal"
                     id={`img${img["id"]}`}
                     src={`/images?id=${img["id"]}`}
+                    alt={`img${img["id"]}`}
                   />
                 </Modal>
                 <img
                   className="image_thingy"
                   id={`img${img["id"]}`}
-                  onClick={handleModalOpen}
+                  onClick={() => handleModalOpen(img["id"])}
                   src={`/images?id=${img["id"]}`}
+                  alt={`img${img["id"]}`}
                 />
                 <Button variant="text" onClick={() => handleImageSubmit(img["id"])}>Choose Image</Button>
               </ImageListItem>

@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import Error from './pages/error/error';
 import Home from './pages/home/main';
+import Results from './pages/results/results';
 import Game, { gameLoader } from './pages/game/game';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
         path: '/game',
         element: <Game />,
         loader: gameLoader
+      },
+      {
+        path: '/results',
+        element: <Results />
       }
     ]
   }

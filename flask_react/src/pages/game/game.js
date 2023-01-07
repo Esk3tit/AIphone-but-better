@@ -157,13 +157,14 @@ export default function Game() {
 
     await refresh();
 
-    // Navigate depending on whether wait is set to 1 or not from submit prompt route
-    // Can probably remove this since we aren't using the wait property and we are already on the route
-    // anyways when this code runs, and refreshing is handled by other code so navigating here again doesn't
-    // do anything except cause a reload that we don't need...
-    if ("wait" in res.data) {
+    // Navigate to results page if round number matches set number of rounds
+    // This is also the only case where the backend API will send player_rounds_list
+    // in the response data (context) so we can just check for this and then navigate
+    // to the results page
+    if ("player_rounds_list" in res.data) {
       navigate(
-        `/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}&wait=1`
+        `/results?game_id=${res.data.game_id}`,
+        { state: res.data }
       );
     } else {
       navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}`);

@@ -28,34 +28,34 @@ export default function Results() {
   };
 
   return (
-    <div id="main-content" style="position: relative;">
+    <div id="main-content" style={{position: "relative"}}>
       <Typography variant='h6'>Username: {state.username}</Typography>
       <Typography>Game id: {state.game_id}</Typography>
       <Typography>Round number: {state.round_number}</Typography>
 
       {state.player_rounds_list.map((player) => (
-        <div class="card mb-3 player_round_card">
-          <Typography variant='h4' class="card-header">{player['username']}'s chain</Typography>
-          <div class="card-body">
-            {player.round_info.map((round_info) => (
-              <div class="card text-white bg-primary mb-3">
-                <div class="card-header">{round_info['username']}</div>
-                <div class="card-body image-card-thingy">
+        <div key={player['username']} className="card mb-3 player_round_card">
+          <Typography variant='h4' className="card-header">{player['username']}'s chain</Typography>
+          <div className="card-body">
+            {player.rounds.map((round_info) => (
+              <div key={round_info['image_id']} className="card text-white bg-primary mb-3">
+                <div className="card-header">{round_info['username']}</div>
+                <div className="card-body image-card-thingy">
                   <Typography>{round_info['prompt']}</Typography>
                   <Modal open={modalOpen && modalImage === round_info['image_id']} onClose={handleModalClose}>
                     <img
-                      class="image_thingy_modal"
+                      className="image_thingy_modal"
                       id={`img${round_info['image_id']}`}
                       src={`/images?id=${round_info['image_id']}`}
                       alt={`img${round_info['image_id']}`}
                     />
                   </Modal>
                   <img
-                    class="image_thingy"
+                    className="image_thingy"
                     id={`img${round_info['image_id']}`}
                     src={`/images?id=${round_info['image_id']}`}
                     alt={`img${round_info['image_id']}`}
-                    onclick={() => handleModalOpen(round_info['image_id'])}
+                    onClick={() => handleModalOpen(round_info['image_id'])}
                   />
                 </div>
               </div>

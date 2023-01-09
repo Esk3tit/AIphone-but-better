@@ -112,6 +112,17 @@ export default function Game() {
     }
   }, [snackPack, snackbarMessage, snackbarOpen]);
 
+  // Go to results page if ctx changes and now has player_rounds_list
+  // since it indicates the end of game (current round == set number of rounds)
+  useEffect(() => {
+    if ("player_rounds_list" in ctx) {
+      navigate(
+        `/results?game_id=${ctx.game_id}`,
+        { state: ctx }
+      );
+    }
+  }, [ctx]);
+
   const handleModalOpen = (img_id) => {
     setModalImage(img_id);
     setModalOpen(true);
@@ -161,14 +172,8 @@ export default function Game() {
     // This is also the only case where the backend API will send player_rounds_list
     // in the response data (context) so we can just check for this and then navigate
     // to the results page
-    if ("player_rounds_list" in res.data) {
-      navigate(
-        `/results?game_id=${res.data.game_id}`,
-        { state: res.data }
-      );
-    } else {
-      navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}`);
-    }
+    navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}`);
+
   };
 
   const handleImageSubmit = async (img_id) => {

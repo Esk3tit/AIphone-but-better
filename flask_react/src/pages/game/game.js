@@ -194,7 +194,7 @@ export default function Game() {
   }
 
   return (
-    <div id="main-content" style={{ position: "relative" }}>
+    <div id="main-content" style={{ position: "relative", margin: 10 }}>
       <Accordion
         sx={{
           position: "absolute",
@@ -306,7 +306,7 @@ export default function Game() {
         </>
       )}
 
-      <div id="prompt-container">
+      <div style={{ marginTop: 10 }} id="prompt-container">
         <form onSubmit={handleFormSubmit}>
           <fieldset>
             <Grid2

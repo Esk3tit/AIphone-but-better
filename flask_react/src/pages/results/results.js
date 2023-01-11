@@ -64,6 +64,7 @@ export default function Results() {
                     />
                   </div>
                   <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">Prompt:</Typography>
                     <Typography variant='body2'>{round_info['prompt']}</Typography>
                   </CardContent>
                 </Card>

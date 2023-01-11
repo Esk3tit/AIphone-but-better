@@ -52,11 +52,19 @@
     "moduleNameMapper": {
       "axios": "axios/dist/node/axios.cjs"
     },
+    "transform": {
+      "node_modules/variables/.+\\.(j|t)sx?$": "ts-jest",
+      "^.+\\.(js|jsx)$": "babel-jest"
+    },
     "transformIgnorePatterns": [
-      "/node_modules/(?!axios)"
+      "/node_modules/(?!axios)",
+      "node_modules/(?!variables/.*)"
     ]
   },
   "devDependencies": {
-    "history": "^5.3.0"
+    "@babel/preset-env": "^7.20.2",
+    "babel-jest": "^29.3.1",
+    "history": "^5.3.0",
+    "ts-jest": "^29.0.3"
   }
 }

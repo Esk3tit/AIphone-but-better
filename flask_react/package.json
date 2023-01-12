@@ -27,8 +27,9 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@codemirror)/\"",
+    "eject": "react-scripts eject",
+    "jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "eslintConfig": {
     "extends": [
@@ -53,7 +54,6 @@
       "axios": "axios/dist/node/axios.cjs"
     },
     "transform": {
-      "node_modules/variables/.+\\.(j|t)sx?$": "ts-jest",
       "^.+\\.(js|jsx)$": "babel-jest"
     },
     "transformIgnorePatterns": [

@@ -61,3 +61,23 @@ it('should render the correct round number field', () => {
   expect(roundNumberText).toBeInTheDocument();
 
 });
+
+it('should render an image', () => {
+
+  render(
+    <MemoryRouter initialEntries={[{
+        state: {
+          username: "test",
+          game_id: 1,
+          round_number: 3,
+          player_rounds_list: [{username: "test", rounds: [{image_id: 1, prompt: "test prompt"}]}]
+        }
+      }]}
+    >
+      <Results />
+    </MemoryRouter>
+  );
+  const img = screen.getByRole("img");
+  expect(img).toBeInTheDocument();
+
+});

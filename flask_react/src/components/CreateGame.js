@@ -53,8 +53,8 @@ export default function CreateGame({ gameId, setGameId }) {
                     <Button variant="contained" disabled={gameId ? true : false} type="submit">New Game</Button>
                 </Grid2>
             </form>
-            <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity="info" sx={{ width: '100%' }} 
+            <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleClose} >
+                <Alert onClose={handleClose} severity="info" sx={{ width: '100%' }}
                     action={
                         <Button color="inherit" size="small" onClick={copyIdToClipboard}>
                             COPY TO CLIPBOARD

@@ -43,6 +43,7 @@ export default function JoinGame({ gameId, setGameId }) {
               placeholder="Enter game id"
               onChange={e => setGameId(e.target.value)}
               value={gameId}
+              inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
             />
           </Grid2>
           <Button variant="contained" type="submit">Submit</Button>

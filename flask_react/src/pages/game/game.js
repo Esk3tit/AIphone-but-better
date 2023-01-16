@@ -168,11 +168,11 @@ export default function Game() {
 
     await refresh();
 
-    // Navigate to results page if round number matches set number of rounds
-    // This is also the only case where the backend API will send player_rounds_list
-    // in the response data (context) so we can just check for this and then navigate
-    // to the results page
-    navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}`);
+    if ("wait" in res.data) {
+      navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}&wait=1`);
+    } else {
+      navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}`);
+    }
 
   };
 

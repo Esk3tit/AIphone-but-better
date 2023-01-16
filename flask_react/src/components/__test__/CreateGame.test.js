@@ -69,8 +69,6 @@ describe('CreateGame rendering tests', () => {
     });
 });
 
-// TEST INTERACTION HERE
-// TEST CREATION AND AUTO CLOSE OF SNACKBAR FOR EXAMPLE AND TEST SNACKBAR STUFF
 describe('CreateGame interaction tests', () => {
     it('should be able to type a number into the text input field', () => {
         const history = createMemoryHistory();
@@ -119,6 +117,25 @@ describe('CreateGame interaction tests', () => {
         fireEvent.click(submitButton);
         waitFor(() => {
             expect(submitButton).toBeDisabled();
+        });
+    });
+
+    it('should close snackbar after 6 seconds', async () => {
+        const history = createMemoryHistory();
+        const setGameId = jest.fn();
+
+        render(
+            <Router location={history.location} navigator={history}>
+                <CreateGame gameId={undefined} setGameId={setGameId} />
+            </Router>
+        );
+    
+        const textboxElement = screen.getByRole("textbox", { name: "Number of Turns" });
+        const submitButton = screen.getByRole("button", { name: "New Game" });
+        fireEvent.change(textboxElement, { target: { value: '2' } });
+        fireEvent.click(submitButton);
+        await waitFor(() => {
+            expect(screen.queryByText(/The game ID to share with your friends is:/i)).not.toBeInTheDocument();
         });
     });
 });

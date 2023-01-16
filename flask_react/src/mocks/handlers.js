@@ -8,5 +8,16 @@ export const handlers = [
         game_id: '1234567890',
       })
     );
+  }),
+
+  rest.get('/login', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        game_id: '1234567890',
+        user_id: '123',
+      })
+    );
   })
+
 ]

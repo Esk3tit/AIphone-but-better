@@ -70,10 +70,12 @@ def create_game():
 def game():
     user_id = request.args['user_id']
     game_id = request.args['game_id']
+    wait = request.args.get('wait', 0) == '1'
 
     ctx = {
         'user_id': user_id,
         'game_id': game_id,
+        'wait': wait,
     }
 
     with GameDb() as db:
@@ -169,6 +171,7 @@ def submit_prompt():
             return {
                 "user_id": user_id,
                 "game_id": game_id,
+                "wait": 1
             } 
         
         round_number = get_current_round_number(game_id, db)

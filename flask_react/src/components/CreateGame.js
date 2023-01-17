@@ -50,7 +50,7 @@ export default function CreateGame({ gameId, setGameId }) {
                             inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                         />
                     </Grid2>
-                    <Button variant="contained" disabled={gameId ? true : false} type="submit">New Game</Button>
+                    <Button variant="contained" disabled={gameId ? true : false} type="submit">Create Game</Button>
                 </Grid2>
             </form>
             <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleClose} >

@@ -4,7 +4,7 @@ import CreateGame from '../CreateGame';
 import { createMemoryHistory } from 'history';
 
 describe('CreateGame rendering tests', () => {
-    it('should render the new game button', () => { 
+    it('should render the Create Game button', () => { 
 
         const history = createMemoryHistory();
     
@@ -13,7 +13,7 @@ describe('CreateGame rendering tests', () => {
                 <CreateGame gameId={1} setGameId={jest.fn()} />
             </Router>
         );
-        const componentTitle = screen.getByRole("button", { name: "New Game" });
+        const componentTitle = screen.getByRole("button", { name: "Create Game" });
         expect(componentTitle).toBeInTheDocument();
     });
     
@@ -42,7 +42,7 @@ describe('CreateGame rendering tests', () => {
         );
     
         const textboxElement = screen.getByRole("textbox", { name: "Number of Turns" });
-        const submitButton = screen.getByRole("button", { name: "New Game" });
+        const submitButton = screen.getByRole("button", { name: "Create Game" });
         fireEvent.change(textboxElement, { target: { value: '2' } });
         fireEvent.click(submitButton);
         const snackbarElement = await screen.findByText(/The game ID to share with your friends is:/i);
@@ -61,7 +61,7 @@ describe('CreateGame rendering tests', () => {
         );
     
         const textboxElement = screen.getByRole("textbox", { name: "Number of Turns" });
-        const submitButton = screen.getByRole("button", { name: "New Game" });
+        const submitButton = screen.getByRole("button", { name: "Create Game" });
         fireEvent.change(textboxElement, { target: { value: '2' } });
         fireEvent.click(submitButton);
         const copyToClipboardElement = await screen.findByText(/COPY TO CLIPBOARD/i);
@@ -94,7 +94,7 @@ describe('CreateGame interaction tests', () => {
         );
     
         const textboxElement = screen.getByRole("textbox", { name: "Number of Turns" });
-        const submitButton = screen.getByRole("button", { name: "New Game" });
+        const submitButton = screen.getByRole("button", { name: "Create Game" });
         fireEvent.change(textboxElement, { target: { value: 'a' } });
         fireEvent.click(submitButton);
         waitFor(() => {
@@ -112,7 +112,7 @@ describe('CreateGame interaction tests', () => {
         );
     
         const textboxElement = screen.getByRole("textbox", { name: "Number of Turns" });
-        const submitButton = screen.getByRole("button", { name: "New Game" });
+        const submitButton = screen.getByRole("button", { name: "Create Game" });
         fireEvent.change(textboxElement, { target: { value: '2' } });
         fireEvent.click(submitButton);
         waitFor(() => {
@@ -131,7 +131,7 @@ describe('CreateGame interaction tests', () => {
         );
     
         const textboxElement = screen.getByRole("textbox", { name: "Number of Turns" });
-        const submitButton = screen.getByRole("button", { name: "New Game" });
+        const submitButton = screen.getByRole("button", { name: "Create Game" });
         fireEvent.change(textboxElement, { target: { value: '2' } });
         fireEvent.click(submitButton);
         await waitFor(() => {

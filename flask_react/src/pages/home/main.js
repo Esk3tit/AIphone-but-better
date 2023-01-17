@@ -32,7 +32,7 @@ export default function Home() {
             <JoinGame gameId={gameId} setGameId={setGameId} />
           </AccordionDetails>
       </Accordion>
-      <Accordion defaultExpanded disabled={gameId ? true : false} disableGutters>
+      <Accordion data-testid="create-game-accordion" defaultExpanded disabled={gameId ? true : false} disableGutters>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel2a-content"

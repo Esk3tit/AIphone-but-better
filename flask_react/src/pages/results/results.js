@@ -50,7 +50,7 @@ export default function Results() {
                         className="image_thingy_modal"
                         id={`img${round_info['image_id']}`}
                         src={`/images?id=${round_info['image_id']}`}
-                        alt={`img${round_info['image_id']}`}
+                        alt={`img${round_info['image_id']} modal`}
                       />
                     </Modal>
                     <CardMedia

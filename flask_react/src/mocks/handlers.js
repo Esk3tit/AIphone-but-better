@@ -18,6 +18,12 @@ export const handlers = [
         user_id: '123',
       })
     );
+  }),
+
+  rest.get('socket.io', (req, res, ctx) => {
+    return res(
+      ctx.status(200)
+    );
   })
 
 ]

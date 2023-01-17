@@ -75,4 +75,34 @@ describe("Testing rendering of game page", () => {
     expect(statusText).toBeInTheDocument();
   });
 
+  it('should render the submit button', async () => {
+    render(
+      <RouterProvider router={router}>
+        <Game />
+      </RouterProvider>
+    );
+    const submitBtn = await screen.findByRole('button', { name: /Submit/i });
+    expect(submitBtn).toBeInTheDocument();
+  });
+
+  it('should render the dropdown', async () => {
+    render(
+      <RouterProvider router={router}>
+        <Game />
+      </RouterProvider>
+    );
+    const dropdown = await screen.findByLabelText(/Select number of images to generate/i);
+    expect(dropdown).toBeInTheDocument();
+  });
+
+  it('should render the text field', async () => {
+    render(
+      <RouterProvider router={router}>
+        <Game />
+      </RouterProvider>
+    );
+    const textField = await screen.findByLabelText(/Enter your prompt:/i);
+    expect(textField).toBeInTheDocument();
+  });
+
 });

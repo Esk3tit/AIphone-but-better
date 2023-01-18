@@ -208,6 +208,7 @@ export default function Game() {
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
+          data-testid="game-info"
         >
           <Typography>Game Info</Typography>
         </AccordionSummary>

@@ -145,20 +145,20 @@ describe("Testing interactions of game page", () => {
     expect(accordion).toHaveAttribute("aria-expanded", "true");
   });
 
-  // it('should refresh the game when the refresh button is clicked', async () => {
-  //   render(
-  //     <RouterProvider router={router}>
-  //       <Game />
-  //     </RouterProvider>
-  //   );
-  //   const accordion = await screen.findByTestId("game-info");
-  //   fireEvent.click(accordion);
-  //   const refreshBtn = await screen.findByRole('button', { name: /Refresh/i });
-  //   fireEvent.click(refreshBtn);
-  //   waitFor(() => {
-  //     expect(screen.findByText(/^noImgRefresh$/i)).toBeInTheDocument();
-  //   });
-  // });
+  it('should refresh the game when the refresh button is clicked', async () => {
+    render(
+      <RouterProvider router={router}>
+        <Game />
+      </RouterProvider>
+    );
+    const accordion = await screen.findByTestId("game-info");
+    fireEvent.click(accordion);
+    const refreshBtn = await screen.findByRole('button', { name: /Refresh/i });
+    fireEvent.click(refreshBtn);
+    waitFor(() => {
+      expect(screen.findByText(/^noImgRefresh$/i)).toBeInTheDocument();
+    });
+  });
 
   it('should collapse the accordion when clicked', async () => {
     render(

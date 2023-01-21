@@ -29,7 +29,8 @@ export const handlers = [
     );
   }),
 
-  rest.post('/submit_prompt', (req, res, ctx) => {
+  rest.post('/submit_prompt', async (req, res, ctx) => {
+
     return res(
       ctx.status(200),
       ctx.json({
@@ -40,55 +41,20 @@ export const handlers = [
     );
   }),
 
-  rest.get('/game', (req, res, ctx) => {
+  rest.get('http://localhost:5000/game', async (req, res, ctx) => {
+
     return res(
       ctx.status(200),
       ctx.json({
         user_id: '4',
         game_id: '77',
-        wait: False,
+        wait: false,
         username: 'noImgRefresh',
         round_number: 0,
         drawn_for: '4',
         all_players_info: [{'name': 'noImgRefresh', 'status': 'writing prompt'}]
       }),
-      ctx.log(console.log)
     );
-
-    // if (!("num_images" in req.body)) {
-    //   return res(
-    //     ctx.status(200),
-    //     ctx.json({
-    //       'user_id': '4',
-    //       'game_id': '77',
-    //       'wait': False,
-    //       'username': 'noImgRefresh',
-    //       'round_number': 0,
-    //       'drawn_for': '4',
-    //       'all_players_info': [{'name': 'noImgRefresh', 'status': 'writing prompt'}]
-    //     })
-    //   )
-    // }
-
-    // if (req.body.num_images === 1) {
-    //   return res(
-    //     ctx.status(200),
-    //     ctx.json({
-    //       'user_id': '7',
-    //       'game_id': '76',
-    //       'wait': False,
-    //       'username': 'test',
-    //       'round_number': 0,
-    //       'drawn_for': '7',
-    //       'all_players_info': [{'name': 'test', 'status': 'waiting for image generation'}],
-    //       'prompt': 'extreme gaming',
-    //       'ready': 0,
-    //       'chosen_image_id': None,
-    //       'images': [{'id': 73, 'path': '/aiphone/data/76/0/7/0.png'}],
-    //       'generated_images': True
-    //     })
-    //   )
-    // }
 
   })
 

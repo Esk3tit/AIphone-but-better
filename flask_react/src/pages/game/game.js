@@ -38,6 +38,7 @@ import "./game.css";
 import { useLoaderData, useNavigate } from "react-router-dom";
 
 export const gameLoader = async ({ request }) => {
+  console.log("React router loader called");
   const url = new URL(request.url);
   const user_id = url.searchParams.get("user_id");
   const game_id = url.searchParams.get("game_id");
@@ -166,8 +167,6 @@ export default function Game() {
       },
     });
 
-    await refresh();
-
     if ("wait" in res.data) {
       navigate(`/game?user_id=${res.data.user_id}&game_id=${res.data.game_id}&wait=1`);
     } else {
@@ -179,7 +178,6 @@ export default function Game() {
   const handleImageSubmit = async (img_id) => {
     await axios.get("/choose_image", { params: { user_id: ctx.user_id, game_id: ctx.game_id, image_id: img_id } });
     navigate(`/game?user_id=${ctx.user_id}&game_id=${ctx.game_id}`);
-    refresh();
   };
 
   let prompt;
@@ -271,14 +269,14 @@ export default function Game() {
                     <img
                       src={`/images?id=${ctx.prev_user_image_id}`}
                       className="image_thingy_modal"
-                      alt={`img${ctx.prev_user_image_id}`}
+                      alt={`img${ctx.prev_user_image_id} prev modal`}
                     />
                   </Modal>
                   <img
                       src={`/images?id=${ctx.prev_user_image_id}`}
                       onClick={() => handleModalOpen(ctx.prev_user_image_id)}
                       className="image_thingy"
-                      alt={`img${ctx.prev_user_image_id}`}
+                      alt={`img${ctx.prev_user_image_id} prev`}
                     />
                 </div>
               </>
@@ -291,14 +289,14 @@ export default function Game() {
                     <img
                       src={`/images?id=${ctx.chosen_image_id}`}
                       className="image_thingy_modal"
-                      alt={`img${ctx.chosen_image_id}`}
+                      alt={`img${ctx.chosen_image_id} chosen modal`}
                     />
                   </Modal>
                   <img
                       src={`/images?id=${ctx.chosen_image_id}`}
                       onClick={() => handleModalOpen(ctx.chosen_image_id)}
                       className="image_thingy"
-                      alt={`img${ctx.chosen_image_id}`}
+                      alt={`img${ctx.chosen_image_id} chosen`}
                     />
                 </div>
               </>
@@ -392,7 +390,7 @@ export default function Game() {
                     className="image_thingy_modal"
                     id={`img${img["id"]}`}
                     src={`/images?id=${img["id"]}`}
-                    alt={`img${img["id"]}`}
+                    alt={`img${img["id"]} modal`}
                   />
                 </Modal>
                 <img

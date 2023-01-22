@@ -76,6 +76,58 @@ const CHOSEN_IMG_LOADER_DATA = {
   wait: false,
 };
 
+const PREV_USER_LOADER_DATA = {
+  "all_players_info": [
+    {
+      "name": "men lover",
+      "status": "writing prompt"
+    },
+    {
+      "name": "sexy god",
+      "status": "writing prompt"
+    }
+  ],
+  "drawn_for": 55,
+  "game_id": "81",
+  "prev_user_image_id": 80,
+  "prev_user_name": "sexy god",
+  "round_number": 1,
+  "user_id": "54",
+  "username": "men lover",
+  "wait": false
+};
+
+const ROUND_2_LOADER_DATA = {
+  "all_players_info": [
+    {
+      "name": "men lover",
+      "status": "waiting for image generation"
+    },
+    {
+      "name": "sexy god",
+      "status": "writing prompt"
+    }
+  ],
+  "chosen_image_id": 81,
+  "drawn_for": 55,
+  "game_id": "81",
+  "generated_images": true,
+  "images": [
+    {
+      "id": 81,
+      "path": "/aiphone/data/81/1/54/0.png"
+    }
+  ],
+  "prev_user_image_id": 80,
+  "prev_user_name": "sexy god",
+  "prompt": "extreme gaming",
+  "ready": 1,
+  "round_number": 1,
+  "user_id": "54",
+  "username": "men lover",
+  "wait": false
+};
+
 const routes = [
   {
     path: "/game",
@@ -108,6 +160,22 @@ const chosen_img_routes = [
   }
 ];
 
+const prev_user_routes = [
+  {
+    path: "/game",
+    element: <Game />,
+    loader: () => PREV_USER_LOADER_DATA,
+  }
+];
+
+const round_2_routes = [
+  {
+    path: "/game",
+    element: <Game />,
+    loader: () => ROUND_2_LOADER_DATA,
+  }
+];
+
 const router = createMemoryRouter(routes, {
   initialEntries: ["/game"],
 });
@@ -124,6 +192,14 @@ const chosen_img_router = createMemoryRouter(chosen_img_routes, {
   initialEntries: ["/game"],
 });
 
+const prev_user_router = createMemoryRouter(prev_user_routes, {
+  initialEntries: ["/game"],
+});
+
+const round_2_router = createMemoryRouter(round_2_routes, {
+  initialEntries: ["/game"],
+});
+
 const MockGame = ({ router }) => {
   return (
     <RouterProvider router={router}>
@@ -134,123 +210,240 @@ const MockGame = ({ router }) => {
 
 describe("Testing rendering of game page", () => {
 
-  it('should render the correct username field', async () => {
-    render(
-      <MockGame router={router}/>
-    );
-    const usernameText = await screen.findByText(/Username: test/i);
-    expect(usernameText).toBeInTheDocument();
+  describe("Base elements that need to be rendered", () => {
+    it('should render the correct username field', async () => {
+      render(
+        <MockGame router={router}/>
+      );
+      const usernameText = await screen.findByText(/Username: test/i);
+      expect(usernameText).toBeInTheDocument();
+    });
+  
+    it('should render the correct game id field', async () => {
+      render(
+        <MockGame router={router}/>
+      );
+      const gameIdText = await screen.findByText(/Game id: 69/i);
+      expect(gameIdText).toBeInTheDocument();
+    });
+  
+    it('should render the correct round number field', async () => {
+      render(
+        <MockGame router={router}/>
+      );
+      const roundNumberText = await screen.findByText(/Round number: 2/i);
+      expect(roundNumberText).toBeInTheDocument();
+    });
+  
+    it('should render the username column of the status table', async () => {
+      render(
+        <MockGame router={router}/>
+      );
+      const usernameText = await screen.findByText(/^Username$/i);
+      expect(usernameText).toBeInTheDocument();
+    });
+  
+    it('should render the status column of the status table', async () => {
+      render(
+        <MockGame router={router}/>
+      );
+      const statusText = await screen.findByText(/Status/i);
+      expect(statusText).toBeInTheDocument();
+    });
+  
+    it('should render the submit button', async () => {
+      render(
+        <MockGame router={router}/>
+      );
+      const submitBtn = await screen.findByRole('button', { name: /Submit/i });
+      expect(submitBtn).toBeInTheDocument();
+    });
+  
+    it('should render the dropdown', async () => {
+      render(
+        <MockGame router={router}/>
+      );
+      const dropdown = await screen.findByLabelText(/Select number of images to generate/i);
+      expect(dropdown).toBeInTheDocument();
+    });
+  
+    it('should render the text field', async () => {
+      render(
+        <MockGame router={router}/>
+      );
+      const textField = await screen.findByLabelText(/Enter your prompt:/i);
+      expect(textField).toBeInTheDocument();
+    });
+  
+    it('should render the username in game info accordion', async () => {
+      render(
+        <MockGame router={router}/>
+      );
+      const accordion = await screen.findByTestId("game-info");
+      fireEvent.click(accordion);
+      const usernameText = await screen.findByText(/^player1$/i);
+      expect(usernameText).toBeInTheDocument();
+    });
+  
+    it('should render the status in game info accordion', async () => {
+      render(
+        <MockGame router={router}/>
+      );
+      const accordion = await screen.findByTestId("game-info");
+      fireEvent.click(accordion);
+      const statusText = await screen.findByText(/writing prompt/i);
+      expect(statusText).toBeInTheDocument();
+    });
   });
 
-  it('should render the correct game id field', async () => {
-    render(
-      <MockGame router={router}/>
-    );
-    const gameIdText = await screen.findByText(/Game id: 69/i);
-    expect(gameIdText).toBeInTheDocument();
+  describe("Generating images renders", () => {
+    it('should render an image when we have image data (from submitting a prompt)', async () => {
+      render(
+        <MockGame router={img_router}/>
+      );
+      expect(screen.getByRole('img')).toBeInTheDocument();
+    });
+  
+    it('should render 4 images when we have multiple images\' data (from generating 4 images)', async () => {
+      render(
+        <MockGame router={img_list_router}/>
+      );
+      expect(screen.getAllByRole('img')).toHaveLength(4);
+    });
+  
+    it('should render 4 "Choose Image" buttons when we have 4 images', async () => {
+      render(
+        <MockGame router={img_list_router}/>
+      );
+      expect(screen.getAllByRole('button', { name: /Choose Image/i })).toHaveLength(4);
+    });
+  
+    it('should NOT render the submit button when we generate images', () => {
+      render(
+        <MockGame router={img_router}/>
+      );
+      const submitBtn = screen.queryByRole('button', { name: /Submit/i });
+      expect(submitBtn).not.toBeInTheDocument();
+    });
+  
+    it('should NOT render the dropdown again when we generate images', () => {
+      render(
+        <MockGame router={img_list_router}/>
+      );
+      const dropdown = screen.queryByLabelText(/Select number of images to generate/i);
+      expect(dropdown).not.toBeInTheDocument();
+    });
   });
 
-  it('should render the correct round number field', async () => {
-    render(
-      <MockGame router={router}/>
-    );
-    const roundNumberText = await screen.findByText(/Round number: 2/i);
-    expect(roundNumberText).toBeInTheDocument();
+  describe("Choosing image", () => {
+    it('should render a chosen image text when we choose image', () => {
+      render(
+        <MockGame router={chosen_img_router}/>
+      );
+      expect(screen.getByText(/Chosen image/i)).toBeInTheDocument();
+    });
+  
+    it('should render a chosen image when we choose image', () => {
+      render(
+        <MockGame router={chosen_img_router}/>
+      );
+      expect(screen.getByAltText("img76 chosen")).toBeInTheDocument();
+    });
+  
+    it('should NOT render the submit button when we choose an image', () => {
+      render(
+        <MockGame router={chosen_img_router}/>
+      );
+      const submitBtn = screen.queryByRole('button', { name: /Submit/i });
+      expect(submitBtn).not.toBeInTheDocument();
+    });
+
+    it('should NOT render the dropdown when we choose an image', () => {
+      render(
+        <MockGame router={chosen_img_router}/>
+      );
+      const dropdown = screen.queryByLabelText(/Select number of images to generate/i);
+      expect(dropdown).not.toBeInTheDocument();
+    });
   });
 
-  it('should render the username column of the status table', async () => {
-    render(
-      <MockGame router={router}/>
-    );
-    const usernameText = await screen.findByText(/^Username$/i);
-    expect(usernameText).toBeInTheDocument();
+  describe("Getting previous/another user's image(s)", () => {
+  
+    it('should render a previous user text when we get previous user\'s image', async () => {
+      render(
+        <MockGame router={prev_user_router}/>
+      );
+      expect(screen.getByText(/^sexy god's image$/i)).toBeInTheDocument();
+    });
+  
+    it('should render a previous user image when we get previous user\'s image', async () => {
+      render(
+        <MockGame router={prev_user_router}/>
+      );
+      expect(screen.getByAltText(/img80 prev/i)).toBeInTheDocument();
+    });
+  
+    it('should render the submit button again when we get previous user\'s image', async () => {
+      render(
+        <MockGame router={prev_user_router}/>
+      );
+      const submitBtn = await screen.findByRole('button', { name: /Submit/i });
+      expect(submitBtn).toBeInTheDocument();
+    });
+  
+    it('should render the dropdown again when we get previous user\'s image', async () => {
+      render(
+        <MockGame router={prev_user_router}/>
+      );
+      const dropdown = await screen.findByLabelText(/Select number of images to generate/i);
+      expect(dropdown).toBeInTheDocument();
+    });
   });
 
-  it('should render the status column of the status table', async () => {
-    render(
-      <MockGame router={router}/>
-    );
-    const statusText = await screen.findByText(/Status/i);
-    expect(statusText).toBeInTheDocument();
-  });
+  describe("Ready for the next round", () => {
+    it('should render a chosen image text when we choose image again', () => {
+      render(
+        <MockGame router={round_2_router}/>
+      );
+      expect(screen.getByText(/Chosen image/i)).toBeInTheDocument();
+    });
+  
+    it('should render a chosen image when we choose image again', () => {
+      render(
+        <MockGame router={round_2_router}/>
+      );
+      expect(screen.getByAltText("img81 chosen")).toBeInTheDocument();
+    });
+  
+    it('should NOT render the submit button when we choose an image again', () => {
+      render(
+        <MockGame router={round_2_router}/>
+      );
+      const submitBtn = screen.queryByRole('button', { name: /Submit/i });
+      expect(submitBtn).not.toBeInTheDocument();
+    });
 
-  it('should render the submit button', async () => {
-    render(
-      <MockGame router={router}/>
-    );
-    const submitBtn = await screen.findByRole('button', { name: /Submit/i });
-    expect(submitBtn).toBeInTheDocument();
-  });
+    it('should NOT render the dropdown when we choose an image again', () => {
+      render(
+        <MockGame router={round_2_router}/>
+      );
+      const dropdown = screen.queryByLabelText(/Select number of images to generate/i);
+      expect(dropdown).not.toBeInTheDocument();
+    });
 
-  it('should render the dropdown', async () => {
-    render(
-      <MockGame router={router}/>
-    );
-    const dropdown = await screen.findByLabelText(/Select number of images to generate/i);
-    expect(dropdown).toBeInTheDocument();
-  });
-
-  it('should render the text field', async () => {
-    render(
-      <MockGame router={router}/>
-    );
-    const textField = await screen.findByLabelText(/Enter your prompt:/i);
-    expect(textField).toBeInTheDocument();
-  });
-
-  it('should render the username in game info accordion', async () => {
-    render(
-      <MockGame router={router}/>
-    );
-    const accordion = await screen.findByTestId("game-info");
-    fireEvent.click(accordion);
-    const usernameText = await screen.findByText(/^player1$/i);
-    expect(usernameText).toBeInTheDocument();
-  });
-
-  it('should render the status in game info accordion', async () => {
-    render(
-      <MockGame router={router}/>
-    );
-    const accordion = await screen.findByTestId("game-info");
-    fireEvent.click(accordion);
-    const statusText = await screen.findByText(/writing prompt/i);
-    expect(statusText).toBeInTheDocument();
-  });
-
-  it('should render an image when we have image data (from submitting a prompt)', async () => {
-    render(
-      <MockGame router={img_router}/>
-    );
-    expect(screen.getByRole('img')).toBeInTheDocument();
-  });
-
-  it('should render 4 images when we have multiple images\' data (from generating 4 images)', async () => {
-    render(
-      <MockGame router={img_list_router}/>
-    );
-    expect(screen.getAllByRole('img')).toHaveLength(4);
-  });
-
-  it('should render 4 "Choose Image" buttons when we have 4 images', async () => {
-    render(
-      <MockGame router={img_list_router}/>
-    );
-    expect(screen.getAllByRole('button', { name: /Choose Image/i })).toHaveLength(4);
-  });
-
-  it('should render a chosen image text when we choose image', async () => {
-    render(
-      <MockGame router={chosen_img_router}/>
-    );
-    expect(screen.getByText(/Chosen image/i)).toBeInTheDocument();
-  });
-
-  it('should render a chosen image when we choose image', async () => {
-    render(
-      <MockGame router={chosen_img_router}/>
-    );
-    expect(screen.getByAltText("img76 chosen")).toBeInTheDocument();
+    it('should still render a previous user text when we get previous user\'s image', async () => {
+      render(
+        <MockGame router={round_2_router}/>
+      );
+      expect(screen.getByText(/^sexy god's image$/i)).toBeInTheDocument();
+    });
+  
+    it('should still render a previous user image when we get previous user\'s image', async () => {
+      render(
+        <MockGame router={round_2_router}/>
+      );
+      expect(screen.getByAltText(/img80 prev/i)).toBeInTheDocument();
+    });
   });
 
 });
@@ -330,6 +523,17 @@ describe("Testing interactions of game page", () => {
     fireEvent.click(chosenImg);
     waitFor(() => {
       expect(screen.findByAltText('img76 chosen modal')).toBeInTheDocument();
+    });
+  });
+
+  it('should render a modal image when the previous user\'s image is clicked', async () => {
+    render(
+      <MockGame router={prev_user_router}/>
+    );
+    const chosenImg = screen.getByAltText("img80 prev");
+    fireEvent.click(chosenImg);
+    waitFor(() => {
+      expect(screen.findByAltText('img80 prev modal')).toBeInTheDocument();
     });
   });
 

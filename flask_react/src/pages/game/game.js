@@ -58,6 +58,8 @@ export default function Game() {
   const [snackPack, setSnackPack] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState(undefined);
+  const [genRandPromptDisabled, setGenRandPromptDisabled] = useState(false);
+  const []
   const navigate = useNavigate();
 
   const refresh = useCallback(async () => {
@@ -89,7 +91,7 @@ export default function Game() {
 
     socket.on('message', (msg) => {
       console.log(`Received message from socket: ${msg}`);
-      handleSnackBarOpen(msg);
+      handleSnackBarOpen(msg, "info");
       refresh();
     });
 
@@ -146,8 +148,25 @@ export default function Game() {
     });
   };
 
-  const handleSnackBarOpen = (message) => {
-    setSnackPack((prev) => [...prev, { message, key: new Date().getTime() }]);
+  const handleGenerateRandomPrompt = async () => {
+    setGenRandPromptDisabled(true);
+
+    // Handle possible error of prompt generating website being down...
+    try {
+      const res = await axios.post("/random_prompt");
+      setCtx((prevCtx) => {
+        return { ...prevCtx, prompt: res.data.prompt };
+      });
+    } catch (err) {
+      console.log("Error generating random prompt: ", err);
+      handleSnackBarOpen("Error generating random prompt. Please try again later. If the issue persists, just make up your own prompt.", "error");
+    }
+    
+    setGenRandPromptDisabled(false);
+  };
+
+  const handleSnackBarOpen = (message, status) => {
+    setSnackPack((prev) => [...prev, { message, key: new Date().getTime(), status: status }]);
   };
   const handleSnackBarClose = () => setSnackbarOpen(false);
   const handleSnackBarExited = () => setSnackbarMessage(undefined);
@@ -264,7 +283,11 @@ export default function Game() {
             {ctx.prev_user_name && (
               <>
                 <div className="card image-width-css-stuff">
-                  <Typography variant="subtitle2" className="card-title">{ctx.prev_user_name}'s image</Typography>
+                  {ctx.drawn_for_name == ctx.prev_user_name ?
+                    <Typography variant="subtitle2" className="card-title">{ctx.prev_user_name}'s image</Typography>
+                    :
+                    <Typography variant="subtitle2" className="card-title">{ctx.prev_user_name}'s interpretation of {ctx.drawn_for_name}'s image</Typography>
+                  }
                   <Modal open={modalOpen && modalImage === ctx.prev_user_image_id} onClose={handleModalClose}>
                     <img
                       src={`/images?id=${ctx.prev_user_image_id}`}
@@ -327,6 +350,7 @@ export default function Game() {
                   sx={{ width: "100%" }}
                   value={ctx.prompt}
                   onChange={handlePromptChange}
+                  disabled={!ctx.generated_images}
                 />
               </Grid2>
               <Grid2 item>
@@ -350,6 +374,8 @@ export default function Game() {
                       <MenuItem value={2}>2</MenuItem>
                       <MenuItem value={1}>1</MenuItem>
                     </Select>
+                  </FormControl>
+                  <Stack spacing={2} direction="row">
                     <Button
                       sx={{ m: 1 }}
                       variant="contained"
@@ -358,7 +384,15 @@ export default function Game() {
                     >
                       Submit
                     </Button>
-                  </FormControl>
+                    <Button
+                      sx={{ m: 1 }}
+                      variant="contained"
+                      className="btn btn-secondary"
+                      onClick={handleRandomPrompt}
+                    >
+                      Generate Random Prompt
+                    </Button>
+                  </Stack>
                 )}
               </Grid2>
             </Grid2>
@@ -415,9 +449,15 @@ export default function Game() {
           onExited: handleSnackBarExited,
         }}
       >
-        <Alert onClose={handleSnackBarClose} severity="info">
-          {snackbarMessage? snackbarMessage.message : undefined}
-        </Alert>
+        {snackbarMessage && snackbarMessage.status === "info" ?
+          <Alert onClose={handleSnackBarClose} severity="info">
+            {snackbarMessage? snackbarMessage.message : undefined}
+          </Alert>
+          :
+          <Alert onClose={handleSnackBarClose} severity="error">
+            {snackbarMessage? snackbarMessage.message : undefined}
+          </Alert>
+        }
       </Snackbar>
     </div>
   );

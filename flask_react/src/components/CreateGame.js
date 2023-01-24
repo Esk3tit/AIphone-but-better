@@ -8,6 +8,7 @@ import Alert from '@mui/material/Alert';
 
 import axios from 'axios';
 import { useSearchParams } from "react-router-dom";
+import { Typography } from "@mui/material";
 
 
 export default function CreateGame({ gameId, setGameId }) {
@@ -18,7 +19,7 @@ export default function CreateGame({ gameId, setGameId }) {
 
     async function redirectToGame(e) {
         e.preventDefault();
-        const res = await axios.get("/create_game", { params: { num_turns: numTurns } });
+        const res = await axios.get("/create_game");
         console.log(res.data.game_id);
         setGameId(res.data.game_id);
         setSearchParams({ game_id: res.data.game_id });
@@ -38,17 +39,10 @@ export default function CreateGame({ gameId, setGameId }) {
             <form onSubmit={redirectToGame} id="new_game_container">
                 <Grid2 container sx={{ m: '3px' }} rowSpacing={3} direction="column" alignItems="center" justifyContent="center">
                     <Grid2 item>
-                        <TextField
-                            required
-                            id="outlined-required"
-                            label="Number of Turns"
-                            placeholder="Enter number of turns"
-                            onChange={e => setNumTurns(e.target.value)}
-                            value={numTurns}
-                            name="num_turns"
-                            disabled={gameId ? true : false}
-                            inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                        />
+                      <Typography variant="h3">
+                        AIphone V2 Update: The number of turns is now dependent on the number of players and the game ends
+                        when you complete one cycle of image passing and get back your original image.
+                      </Typography>
                     </Grid2>
                     <Button variant="contained" disabled={gameId ? true : false} type="submit">Create Game</Button>
                 </Grid2>

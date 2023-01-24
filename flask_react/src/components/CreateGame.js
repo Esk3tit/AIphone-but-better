@@ -39,7 +39,7 @@ export default function CreateGame({ gameId, setGameId }) {
             <form onSubmit={redirectToGame} id="new_game_container">
                 <Grid2 container sx={{ m: '3px' }} rowSpacing={3} direction="column" alignItems="center" justifyContent="center">
                     <Grid2 item>
-                      <Typography variant="h3">
+                      <Typography variant="subtitle2">
                         AIphone V2 Update: The number of turns is now dependent on the number of players and the game ends
                         when you complete one cycle of image passing and get back your original image.
                       </Typography>

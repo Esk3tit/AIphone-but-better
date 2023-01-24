@@ -27,6 +27,7 @@ import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
@@ -59,7 +60,6 @@ export default function Game() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState(undefined);
   const [genRandPromptDisabled, setGenRandPromptDisabled] = useState(false);
-  const []
   const navigate = useNavigate();
 
   const refresh = useCallback(async () => {
@@ -283,7 +283,7 @@ export default function Game() {
             {ctx.prev_user_name && (
               <>
                 <div className="card image-width-css-stuff">
-                  {ctx.drawn_for_name == ctx.prev_user_name ?
+                  {ctx.drawn_for_name === ctx.prev_user_name ?
                     <Typography variant="subtitle2" className="card-title">{ctx.prev_user_name}'s image</Typography>
                     :
                     <Typography variant="subtitle2" className="card-title">{ctx.prev_user_name}'s interpretation of {ctx.drawn_for_name}'s image</Typography>
@@ -355,44 +355,47 @@ export default function Game() {
               </Grid2>
               <Grid2 item>
                 {!ctx.generated_images && (
-                  <FormControl id="submit-box-thing">
-                    <InputLabel id="num-images-label">
-                      Select number of images to generate
-                    </InputLabel>
-                    <Select
-                      label="Select number of images to generate"
-                      labelId="num-images-label"
-                      id="num-images"
-                      name="num_images"
-                      className="form-select"
-                      value={numImages}
-                      onChange={handleNumImagesChange}
-                      sx={{ width: 300 }}
-                    >
-                      <MenuItem value={4}>4</MenuItem>
-                      <MenuItem value={3}>3</MenuItem>
-                      <MenuItem value={2}>2</MenuItem>
-                      <MenuItem value={1}>1</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <Stack spacing={2} direction="row">
-                    <Button
-                      sx={{ m: 1 }}
-                      variant="contained"
-                      type="submit"
-                      className="btn btn-primary"
-                    >
-                      Submit
-                    </Button>
-                    <Button
-                      sx={{ m: 1 }}
-                      variant="contained"
-                      className="btn btn-secondary"
-                      onClick={handleRandomPrompt}
-                    >
-                      Generate Random Prompt
-                    </Button>
-                  </Stack>
+                  <>
+                    <FormControl id="submit-box-thing">
+                      <InputLabel id="num-images-label">
+                        Select number of images to generate
+                      </InputLabel>
+                      <Select
+                        label="Select number of images to generate"
+                        labelId="num-images-label"
+                        id="num-images"
+                        name="num_images"
+                        className="form-select"
+                        value={numImages}
+                        onChange={handleNumImagesChange}
+                        sx={{ width: 300 }}
+                      >
+                        <MenuItem value={4}>4</MenuItem>
+                        <MenuItem value={3}>3</MenuItem>
+                        <MenuItem value={2}>2</MenuItem>
+                        <MenuItem value={1}>1</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <Stack spacing={2} direction="row">
+                      <Button
+                        sx={{ m: 1 }}
+                        variant="contained"
+                        type="submit"
+                        className="btn btn-primary"
+                      >
+                        Submit
+                      </Button>
+                      <Button
+                        sx={{ m: 1 }}
+                        variant="contained"
+                        className="btn btn-secondary"
+                        onClick={handleGenerateRandomPrompt}
+                        disabled={genRandPromptDisabled}
+                      >
+                        Generate Random Prompt
+                      </Button>
+                    </Stack>
+                  </>
                 )}
               </Grid2>
             </Grid2>

@@ -28,6 +28,8 @@ import ImageListItem from "@mui/material/ImageListItem";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from "@mui/material/Box";
 
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
@@ -154,6 +156,7 @@ export default function Game() {
     // Handle possible error of prompt generating website being down...
     try {
       const res = await axios.post("/random_prompt");
+      console.log("Random prompt: ", res.data.prompt);
       setCtx((prevCtx) => {
         return { ...prevCtx, prompt: res.data.prompt };
       });
@@ -350,12 +353,12 @@ export default function Game() {
                   sx={{ width: "100%" }}
                   value={ctx.prompt}
                   onChange={handlePromptChange}
-                  disabled={!ctx.generated_images}
+                  disabled={ctx.generated_images}
                 />
               </Grid2>
               <Grid2 item>
                 {!ctx.generated_images && (
-                  <>
+                  <Stack spacing={2} direction="column">
                     <FormControl id="submit-box-thing">
                       <InputLabel id="num-images-label">
                         Select number of images to generate
@@ -376,9 +379,8 @@ export default function Game() {
                         <MenuItem value={1}>1</MenuItem>
                       </Select>
                     </FormControl>
-                    <Stack spacing={2} direction="row">
+                    <Stack spacing={1} direction="row">
                       <Button
-                        sx={{ m: 1 }}
                         variant="contained"
                         type="submit"
                         className="btn btn-primary"
@@ -386,8 +388,7 @@ export default function Game() {
                         Submit
                       </Button>
                       <Button
-                        sx={{ m: 1 }}
-                        variant="contained"
+                        variant="outlined"
                         className="btn btn-secondary"
                         onClick={handleGenerateRandomPrompt}
                         disabled={genRandPromptDisabled}
@@ -395,7 +396,7 @@ export default function Game() {
                         Generate Random Prompt
                       </Button>
                     </Stack>
-                  </>
+                  </Stack>
                 )}
               </Grid2>
             </Grid2>
@@ -412,6 +413,11 @@ export default function Game() {
       {ctx.generated_images && (
         <>
           <Typography variant="h6">Images generated so far</Typography>
+          {ctx.images.length === 0 && 
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <CircularProgress />
+            </Box>
+          }
           <ImageList id="images" cols={4}>
             {ctx.images.map((img) => (
               <ImageListItem

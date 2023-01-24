@@ -40,9 +40,6 @@ def login():
     username = request.args['username']
     game_id = request.args['game_id']
 
-    if not username:
-        return redirect(f"/?game_id={game_id}&invalid=1")
-
     with GameDb() as db:
         # Create user account for user if they don't already have one
         if not db.sql_fetchone('SELECT id FROM Users WHERE username = ?', (username,)):

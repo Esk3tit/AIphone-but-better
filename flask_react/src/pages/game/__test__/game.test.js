@@ -88,6 +88,7 @@ const PREV_USER_LOADER_DATA = {
     }
   ],
   "drawn_for": 55,
+  "drawn_for_name": "sexy god",
   "game_id": "81",
   "prev_user_image_id": 80,
   "prev_user_name": "sexy god",
@@ -110,6 +111,7 @@ const ROUND_2_LOADER_DATA = {
   ],
   "chosen_image_id": 81,
   "drawn_for": 55,
+  "drawn_for_name": "sexy god",
   "game_id": "81",
   "generated_images": true,
   "images": [

@@ -13,38 +13,38 @@ const LOADER_DATA = {
 };
 
 const IMG_LOADER_DATA = {
-  'user_id': '7',
-  'game_id': '76',
-  'wait': false,
-  'username': 'test',
-  'round_number': 0,
-  'drawn_for': '7',
-  'all_players_info': [{'name': 'test', 'status': 'waiting for image generation'}],
-  'prompt': 'extreme gaming',
-  'ready': 0,
-  'chosen_image_id': null,
-  'images': [{'id': 73, 'path': '/aiphone/data/76/0/7/0.png'}],
-  'generated_images': true
+  user_id: "7",
+  game_id: "76",
+  wait: false,
+  username: "test",
+  round_number: 0,
+  drawn_for: "7",
+  all_players_info: [{ name: "test", status: "waiting for image generation" }],
+  prompt: "extreme gaming",
+  ready: 0,
+  chosen_image_id: null,
+  images: [{ id: 73, path: "/aiphone/data/76/0/7/0.png" }],
+  generated_images: true,
 };
 
 const IMG_LIST_LOADER_DATA = {
-  'user_id': '7',
-  'game_id': '76',
-  'wait': false,
-  'username': 'test',
-  'round_number': 0,
-  'drawn_for': '7',
-  'all_players_info': [{'name': 'test', 'status': 'waiting for image generation'}],
-  'prompt': 'extreme gaming',
-  'ready': 0,
-  'chosen_image_id': null,
-  'images': [
-    {'id': 73, 'path': '/aiphone/data/76/0/7/0.png'}, 
-    {'id': 74, 'path': '/aiphone/data/76/0/7/1.png'},
-    {'id': 75, 'path': '/aiphone/data/76/0/7/2.png'},
-    {'id': 76, 'path': '/aiphone/data/76/0/7/3.png'}
+  user_id: "7",
+  game_id: "76",
+  wait: false,
+  username: "test",
+  round_number: 0,
+  drawn_for: "7",
+  all_players_info: [{ name: "test", status: "waiting for image generation" }],
+  prompt: "extreme gaming",
+  ready: 0,
+  chosen_image_id: null,
+  images: [
+    { id: 73, path: "/aiphone/data/76/0/7/0.png" },
+    { id: 74, path: "/aiphone/data/76/0/7/1.png" },
+    { id: 75, path: "/aiphone/data/76/0/7/2.png" },
+    { id: 76, path: "/aiphone/data/76/0/7/3.png" },
   ],
-  'generated_images': true
+  generated_images: true,
 };
 
 const CHOSEN_IMG_LOADER_DATA = {
@@ -77,57 +77,79 @@ const CHOSEN_IMG_LOADER_DATA = {
 };
 
 const PREV_USER_LOADER_DATA = {
-  "all_players_info": [
+  all_players_info: [
     {
-      "name": "men lover",
-      "status": "writing prompt"
+      name: "men lover",
+      status: "writing prompt",
     },
     {
-      "name": "sexy god",
-      "status": "writing prompt"
-    }
+      name: "sexy god",
+      status: "writing prompt",
+    },
   ],
-  "drawn_for": 55,
-  "drawn_for_name": "sexy god",
-  "game_id": "81",
-  "prev_user_image_id": 80,
-  "prev_user_name": "sexy god",
-  "round_number": 1,
-  "user_id": "54",
-  "username": "men lover",
-  "wait": false
+  drawn_for: 55,
+  drawn_for_name: "sexy god",
+  game_id: "81",
+  prev_user_image_id: 80,
+  prev_user_name: "sexy god",
+  round_number: 1,
+  user_id: "54",
+  username: "men lover",
+  wait: false,
+};
+
+const PREV_USER_DIFF_LOADER_DATA = {
+  all_players_info: [
+    {
+      name: "men lover",
+      status: "writing prompt",
+    },
+    {
+      name: "sexy god",
+      status: "writing prompt",
+    },
+  ],
+  drawn_for: 55,
+  drawn_for_name: "transgender god",
+  game_id: "81",
+  prev_user_image_id: 80,
+  prev_user_name: "sexy god",
+  round_number: 1,
+  user_id: "54",
+  username: "men lover",
+  wait: false,
 };
 
 const ROUND_2_LOADER_DATA = {
-  "all_players_info": [
+  all_players_info: [
     {
-      "name": "men lover",
-      "status": "waiting for image generation"
+      name: "men lover",
+      status: "waiting for image generation",
     },
     {
-      "name": "sexy god",
-      "status": "writing prompt"
-    }
+      name: "sexy god",
+      status: "writing prompt",
+    },
   ],
-  "chosen_image_id": 81,
-  "drawn_for": 55,
-  "drawn_for_name": "sexy god",
-  "game_id": "81",
-  "generated_images": true,
-  "images": [
+  chosen_image_id: 81,
+  drawn_for: 55,
+  drawn_for_name: "sexy god",
+  game_id: "81",
+  generated_images: true,
+  images: [
     {
-      "id": 81,
-      "path": "/aiphone/data/81/1/54/0.png"
-    }
+      id: 81,
+      path: "/aiphone/data/81/1/54/0.png",
+    },
   ],
-  "prev_user_image_id": 80,
-  "prev_user_name": "sexy god",
-  "prompt": "extreme gaming",
-  "ready": 1,
-  "round_number": 1,
-  "user_id": "54",
-  "username": "men lover",
-  "wait": false
+  prev_user_image_id: 80,
+  prev_user_name: "sexy god",
+  prompt: "extreme gaming",
+  ready: 1,
+  round_number: 1,
+  user_id: "54",
+  username: "men lover",
+  wait: false,
 };
 
 const routes = [
@@ -170,6 +192,14 @@ const prev_user_routes = [
   }
 ];
 
+const prev_user_diff_routes = [
+  {
+    path: "/game",
+    element: <Game />,
+    loader: () => PREV_USER_DIFF_LOADER_DATA,
+  }
+];
+
 const round_2_routes = [
   {
     path: "/game",
@@ -195,6 +225,10 @@ const chosen_img_router = createMemoryRouter(chosen_img_routes, {
 });
 
 const prev_user_router = createMemoryRouter(prev_user_routes, {
+  initialEntries: ["/game"],
+});
+
+const prev_user_diff_router = createMemoryRouter(prev_user_diff_routes, {
   initialEntries: ["/game"],
 });
 
@@ -259,6 +293,14 @@ describe("Testing rendering of game page", () => {
       );
       const submitBtn = await screen.findByRole('button', { name: /Submit/i });
       expect(submitBtn).toBeInTheDocument();
+    });
+
+    it('should render the generate random prompt button', async () => {
+      render(
+        <MockGame router={router}/>
+      );
+      const generateRndPromptBtn = await screen.findByRole('button', { name: /Generate Random Prompt/i });
+      expect(generateRndPromptBtn).toBeInTheDocument();
     });
   
     it('should render the dropdown', async () => {
@@ -377,6 +419,13 @@ describe("Testing rendering of game page", () => {
       );
       expect(screen.getByText(/^sexy god's image$/i)).toBeInTheDocument();
     });
+
+    it('should render a different heading when the drawn_for_name is different from previous user\'s name', async () => {
+      render(
+        <MockGame router={prev_user_diff_router}/>
+      );
+      expect(screen.getByText(/^sexy god's interpretation of transgender god's image$/i)).toBeInTheDocument();
+    });
   
     it('should render a previous user image when we get previous user\'s image', async () => {
       render(
@@ -491,6 +540,18 @@ describe("Testing interactions of game page", () => {
     const textField = await screen.findByLabelText(/Enter your prompt:/i);
     fireEvent.change(textField, { target: { value: 'Joe Mama' } });
     expect(textField.value).toBe('Joe Mama');
+  });
+
+  it('should change input in the textarea/textfield when we generate a random prompt', async () => {
+    render(
+      <MockGame router={router}/>
+    );
+    const textField = await screen.findByLabelText(/Enter your prompt:/i);
+    const generateRndPromptBtn = await screen.findByRole('button', { name: /Generate Random Prompt/i });
+    fireEvent.click(generateRndPromptBtn);
+    waitFor(() => {
+      expect(textField.value).toBe('this is a random prompt');
+    });
   });
 
   it('should change the dropdown values when a new value is selected', async () => {

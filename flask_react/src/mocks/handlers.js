@@ -56,6 +56,16 @@ export const handlers = [
       }),
     );
 
+  }),
+
+  rest.post('/random_prompt', async (req, res, ctx) => {
+      
+      return res(
+        ctx.status(200),
+        ctx.json({
+          prompt: 'this is a random prompt'
+        })
+      );
   })
 
 ]

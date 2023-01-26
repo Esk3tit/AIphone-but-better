@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import Snackbar from '@mui/material/Snackbar';
@@ -12,8 +11,7 @@ import { Typography } from "@mui/material";
 
 
 export default function CreateGame({ gameId, setGameId }) {
-
-    const [numTurns, setNumTurns] = useState("");
+  
     const [openAlert, setOpenAlert] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
 

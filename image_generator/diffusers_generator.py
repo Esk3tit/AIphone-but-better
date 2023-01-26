@@ -27,10 +27,6 @@ if __name__ == '__main__':
         # Get image to generate
         _, data = r.blpop('image_to_generate')
 
-        l = r.lrange('flask_image_done', 0, -1)
-        for x in l:
-          print("+++ flask_image_done in DIFFUSER elem:", x)
-
         game_id, round_number, user_id, prompt, drawn_for, num_images = json.loads(data)
         # Generate image
         print(f"Generating images for:\nGame:\t{game_id}\nRound:\t{round_number}\nUser:\t{user_id}")

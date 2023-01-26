@@ -18,7 +18,17 @@ class Worker:
         while True:
             # this is necessary for some reason. ugh.
             self.q.get()
+
+            l = self.r.lrange('flask_image_done', 0, -1)
+            for x in l:
+              print("++++++ flask_image_done BEFORE BLPOP:", x)
+
             _, data = self.r.blpop('flask_image_done')
+
+            l = self.r.lrange('flask_image_done', 0, -1)
+            for x in l:
+              print("++++++ flask_image_done AFTER BLPOP:", x)
+
             print("#################### RECEIVED FLASK IMAGE DONE MESSAGE ####################")
             game_id, round_number, user_id, prompt, drawn_for, num_images = json.loads(data)
 
@@ -41,9 +51,6 @@ class Worker:
         print('############## enqueuing prompt ##############')
         self.q.put('work pls')
         self.r.rpush('image_to_generate', json.dumps([game_id, round_number, user_id, prompt, drawn_for, num_images]))
-        l = self.r.lrange('image_to_generate', 0, -1)
-        for x in l:
-          print("=== image_to_generate elem:", x)
         l = self.r.lrange('flask_image_done', 0, -1)
         for x in l:
-          print("=== flask_image_done in woker elem:", x)
+          print("++++++ flask_image_done AFTER ENQUEUE:", x)

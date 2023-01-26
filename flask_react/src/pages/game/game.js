@@ -94,13 +94,18 @@ export default function Game() {
     socket.on('message', (msg) => {
       console.log(`Received message from socket: ${msg}`);
       handleSnackBarOpen(msg, "info");
-      refresh();
+    });
+
+    socket.on('game_info', (game_info) => {
+      console.log(`Received game_info from socket: ${JSON.stringify(game_info)}`);
+      setCtx((prev) => ({ ...prev, all_players_info: game_info }));
     });
 
     return () => {
       socket.off('connect');
       socket.off('reload');
       socket.off('message');
+      socket.off('game_info');
     };
 
   }, []);

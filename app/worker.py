@@ -19,7 +19,7 @@ class Worker:
             # this is necessary for some reason. ugh.
             self.q.get()
             _, data = self.r.blpop('flask_image_done')
-            print("####################### RECIEVED FLASK IMAGE DONE MESSAGE #######################")
+            print("#################### RECEIVED FLASK IMAGE DONE MESSAGE ####################")
             game_id, round_number, user_id, prompt, drawn_for, num_images = json.loads(data)
 
             # Update db
@@ -41,3 +41,9 @@ class Worker:
         print('############## enqueuing prompt ##############')
         self.q.put('work pls')
         self.r.rpush('image_to_generate', json.dumps([game_id, round_number, user_id, prompt, drawn_for, num_images]))
+        l = self.r.lrange('image_to_generate', 0, -1)
+        for x in l:
+          print("=== image_to_generate elem:", x)
+        l = self.r.lrange('flask_image_done', 0, -1)
+        for x in l:
+          print("=== flask_image_done elem:", x)

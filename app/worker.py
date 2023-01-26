@@ -46,4 +46,4 @@ class Worker:
           print("=== image_to_generate elem:", x)
         l = self.r.lrange('flask_image_done', 0, -1)
         for x in l:
-          print("=== flask_image_done elem:", x)
+          print("=== flask_image_done in woker elem:", x)

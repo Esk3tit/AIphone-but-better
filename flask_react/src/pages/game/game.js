@@ -68,7 +68,7 @@ export default function Game() {
     const res = await axios.get("/game", {
       params: { user_id: ctx.user_id, game_id: ctx.game_id },
     });
-    console.log("Context after refresh/returned from refresh: ", res.data);
+    console.log("Context that will be set for refresh: ", res.data);
     setCtx(res.data);
   }, [ctx]);
 

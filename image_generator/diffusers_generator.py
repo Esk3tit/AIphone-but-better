@@ -32,5 +32,5 @@ if __name__ == '__main__':
         dir_path = Path('data').joinpath(str(game_id)).joinpath(str(round_number)).joinpath(str(user_id))
         gen_images(prompt, num_images, dir_path)
         # Update flask with results
-        r.lpush('flask_image_done', data)
+        r.rpush('flask_image_done', data)
         print('Sent update to redis')

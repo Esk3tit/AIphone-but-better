@@ -12,9 +12,10 @@ class Worker:
     def __init__(self, socketio: SocketIO) -> None:
         self.q = eventlet.Queue()
         self.r = redis.Redis(host=os.environ.get('REDIS_HOST', 'localhost'))
-        self.w = Thread(daemon=True, target=self.worker, args=(socketio,), name="Image Storing Worker")
-        print("Starting worker thread")
-        self.w.start()
+        # self.w = Thread(daemon=True, target=self.worker, args=(socketio,), name="Image Storing Worker")
+        # print("Starting worker thread")
+        # self.w.start()
+        self.w = socketio.start_background_task(target=self.worker, socketio=socketio)
 
     def worker(self, socketio) -> None:
         print('starting worker...')

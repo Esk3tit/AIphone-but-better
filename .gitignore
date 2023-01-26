@@ -1,6 +1,6 @@
 __pycache__
 data
-flask_react/backend/data
-flask_react/backend/game.db
-flask_react/backend/aiphoneenv
 image_generator/stable-diffusion-v1-5
+image_generator/stable-diffusion-2
+image_generator/stable-diffusion-2-base
+flask_react/node_modules

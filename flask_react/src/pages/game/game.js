@@ -27,6 +27,9 @@ import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
+import CircularProgress from '@mui/material/CircularProgress';
+import Box from "@mui/material/Box";
 
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
@@ -58,6 +61,7 @@ export default function Game() {
   const [snackPack, setSnackPack] = useState([]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState(undefined);
+  const [genRandPromptDisabled, setGenRandPromptDisabled] = useState(false);
   const navigate = useNavigate();
 
   const refresh = useCallback(async () => {
@@ -89,7 +93,7 @@ export default function Game() {
 
     socket.on('message', (msg) => {
       console.log(`Received message from socket: ${msg}`);
-      handleSnackBarOpen(msg);
+      handleSnackBarOpen(msg, "info");
       refresh();
     });
 
@@ -146,8 +150,26 @@ export default function Game() {
     });
   };
 
-  const handleSnackBarOpen = (message) => {
-    setSnackPack((prev) => [...prev, { message, key: new Date().getTime() }]);
+  const handleGenerateRandomPrompt = async () => {
+    setGenRandPromptDisabled(true);
+
+    // Handle possible error of prompt generating website being down...
+    try {
+      const res = await axios.post("/random_prompt");
+      console.log("Random prompt: ", res.data.prompt);
+      setCtx((prevCtx) => {
+        return { ...prevCtx, prompt: res.data.prompt };
+      });
+    } catch (err) {
+      console.log("Error generating random prompt: ", err);
+      handleSnackBarOpen("Error generating random prompt. Please try again later. If the issue persists, just make up your own prompt.", "error");
+    }
+    
+    setGenRandPromptDisabled(false);
+  };
+
+  const handleSnackBarOpen = (message, status) => {
+    setSnackPack((prev) => [...prev, { message, key: new Date().getTime(), status: status }]);
   };
   const handleSnackBarClose = () => setSnackbarOpen(false);
   const handleSnackBarExited = () => setSnackbarMessage(undefined);
@@ -264,7 +286,11 @@ export default function Game() {
             {ctx.prev_user_name && (
               <>
                 <div className="card image-width-css-stuff">
-                  <Typography variant="subtitle2" className="card-title">{ctx.prev_user_name}'s image</Typography>
+                  {ctx.drawn_for_name === ctx.prev_user_name ?
+                    <Typography variant="subtitle2" className="card-title">{ctx.prev_user_name}'s image</Typography>
+                    :
+                    <Typography variant="subtitle2" className="card-title">{ctx.prev_user_name}'s interpretation of {ctx.drawn_for_name}'s image</Typography>
+                  }
                   <Modal open={modalOpen && modalImage === ctx.prev_user_image_id} onClose={handleModalClose}>
                     <img
                       src={`/images?id=${ctx.prev_user_image_id}`}
@@ -327,38 +353,50 @@ export default function Game() {
                   sx={{ width: "100%" }}
                   value={ctx.prompt}
                   onChange={handlePromptChange}
+                  disabled={ctx.generated_images}
                 />
               </Grid2>
               <Grid2 item>
                 {!ctx.generated_images && (
-                  <FormControl id="submit-box-thing">
-                    <InputLabel id="num-images-label">
-                      Select number of images to generate
-                    </InputLabel>
-                    <Select
-                      label="Select number of images to generate"
-                      labelId="num-images-label"
-                      id="num-images"
-                      name="num_images"
-                      className="form-select"
-                      value={numImages}
-                      onChange={handleNumImagesChange}
-                      sx={{ width: 300 }}
-                    >
-                      <MenuItem value={4}>4</MenuItem>
-                      <MenuItem value={3}>3</MenuItem>
-                      <MenuItem value={2}>2</MenuItem>
-                      <MenuItem value={1}>1</MenuItem>
-                    </Select>
-                    <Button
-                      sx={{ m: 1 }}
-                      variant="contained"
-                      type="submit"
-                      className="btn btn-primary"
-                    >
-                      Submit
-                    </Button>
-                  </FormControl>
+                  <Stack spacing={2} direction="column">
+                    <FormControl id="submit-box-thing">
+                      <InputLabel id="num-images-label">
+                        Select number of images to generate
+                      </InputLabel>
+                      <Select
+                        label="Select number of images to generate"
+                        labelId="num-images-label"
+                        id="num-images"
+                        name="num_images"
+                        className="form-select"
+                        value={numImages}
+                        onChange={handleNumImagesChange}
+                        sx={{ width: 300 }}
+                      >
+                        <MenuItem value={4}>4</MenuItem>
+                        <MenuItem value={3}>3</MenuItem>
+                        <MenuItem value={2}>2</MenuItem>
+                        <MenuItem value={1}>1</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <Stack spacing={1} direction="row">
+                      <Button
+                        variant="contained"
+                        type="submit"
+                        className="btn btn-primary"
+                      >
+                        Submit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        className="btn btn-secondary"
+                        onClick={handleGenerateRandomPrompt}
+                        disabled={genRandPromptDisabled}
+                      >
+                        Generate Random Prompt
+                      </Button>
+                    </Stack>
+                  </Stack>
                 )}
               </Grid2>
             </Grid2>
@@ -375,6 +413,11 @@ export default function Game() {
       {ctx.generated_images && (
         <>
           <Typography variant="h6">Images generated so far</Typography>
+          {ctx.images.length === 0 && 
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <CircularProgress />
+            </Box>
+          }
           <ImageList id="images" cols={4}>
             {ctx.images.map((img) => (
               <ImageListItem
@@ -415,9 +458,15 @@ export default function Game() {
           onExited: handleSnackBarExited,
         }}
       >
-        <Alert onClose={handleSnackBarClose} severity="info">
-          {snackbarMessage? snackbarMessage.message : undefined}
-        </Alert>
+        {snackbarMessage && snackbarMessage.status === "info" ?
+          <Alert onClose={handleSnackBarClose} severity="info">
+            {snackbarMessage? snackbarMessage.message : undefined}
+          </Alert>
+          :
+          <Alert onClose={handleSnackBarClose} severity="error">
+            {snackbarMessage? snackbarMessage.message : undefined}
+          </Alert>
+        }
       </Snackbar>
     </div>
   );

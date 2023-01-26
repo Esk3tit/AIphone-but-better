@@ -48,8 +48,6 @@ describe('Home interaction tests (integrating join and create game)', () => {
 
   it('should fill in game id input when you create new game', async () => {
     render(<MockHome />);
-    const numTurnsInput = screen.getByPlaceholderText(/Enter number of turns/i);
-    fireEvent.change(numTurnsInput, { target: { value: '1' } });
     const newGameButton = screen.getByRole('button', { name: /Create Game/i });
     act(() => {
       fireEvent.click(newGameButton);
@@ -61,8 +59,6 @@ describe('Home interaction tests (integrating join and create game)', () => {
 
   it('should disable create game accordion when you create new game', async () => {
     render(<MockHome />);
-    const numTurnsInput = screen.getByPlaceholderText(/Enter number of turns/i);
-    fireEvent.change(numTurnsInput, { target: { value: '1' } });
     const newGameButton = screen.getByRole('button', { name: /Create Game/i });
     act(() => {
       fireEvent.click(newGameButton);

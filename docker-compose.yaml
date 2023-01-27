@@ -57,8 +57,10 @@ services:
 
   frontend:
     image: kaipanofficial/aiphone-react:latest
+    build: ./flask_react
     ports:
-      - 80:80
+      - 8080:80
+    restart: always
     depends_on:
       - app
       - image_generator

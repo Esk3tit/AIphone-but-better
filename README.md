@@ -12,9 +12,9 @@ Before you can run AIphone using Docker, you'll have to get the NVIDIA Container
 ```
 git clone https://github.com/BobbySinclusto/AIphone.git
 ```
-4. Change directories into `AIphone/image_generator`: 
+4. Change directories into `AIphone-but-better/image_generator`: 
 ```
-cd AIphone/image_generator
+cd AIphone-but-better/image_generator
 ```
 5. Clone the huggingface repo (while still inside the AIphone directory): 
 ```

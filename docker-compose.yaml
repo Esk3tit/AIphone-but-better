@@ -54,3 +54,8 @@ services:
     restart: always
     expose:
       - "6379"
+
+  frontend:
+    image: kaipanofficial/aiphone-react:latest
+    ports:
+      - 80:80

@@ -45,7 +45,7 @@ export const gameLoader = async ({ request }) => {
   const url = new URL(request.url);
   const user_id = url.searchParams.get("user_id");
   const game_id = url.searchParams.get("game_id");
-  const res = await axios.get("/game", {
+  const res = await axios.get("http://localhost:5000/game", {
     params: { user_id: user_id, game_id: game_id },
   });
   return res.data;
@@ -62,11 +62,10 @@ export default function Game() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState(undefined);
   const [genRandPromptDisabled, setGenRandPromptDisabled] = useState(false);
-  const [loadingImgs, setLoadingImgs] = useState(false);
   const navigate = useNavigate();
 
   const refresh = useCallback(async () => {
-    const res = await axios.get("/game", {
+    const res = await axios.get("http://localhost:5000/game", {
       params: { user_id: ctx.user_id, game_id: ctx.game_id },
     });
     console.log("Context that will be set for refresh: ", res.data);
@@ -161,7 +160,7 @@ export default function Game() {
 
     // Handle possible error of prompt generating website being down...
     try {
-      const res = await axios.post("/random_prompt");
+      const res = await axios.post("http://localhost:5000/random_prompt");
       console.log("Random prompt: ", res.data.prompt);
       setCtx((prevCtx) => {
         return { ...prevCtx, prompt: res.data.prompt };
@@ -193,7 +192,7 @@ export default function Game() {
       return { ...prevCtx, generated_images: true, images: [] };
     });
 
-    const res = await axios.post("/submit_prompt", data, {
+    const res = await axios.post("http://localhost:5000/submit_prompt", data, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
@@ -208,7 +207,7 @@ export default function Game() {
   };
 
   const handleImageSubmit = async (img_id) => {
-    await axios.get("/choose_image", { params: { user_id: ctx.user_id, game_id: ctx.game_id, image_id: img_id } });
+    await axios.get("http://localhost:5000/choose_image", { params: { user_id: ctx.user_id, game_id: ctx.game_id, image_id: img_id } });
     navigate(`/game?user_id=${ctx.user_id}&game_id=${ctx.game_id}`);
   };
 

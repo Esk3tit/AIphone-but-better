@@ -18,7 +18,7 @@ export default function CreateGame({ gameId, setGameId }) {
 
     async function redirectToGame(e) {
         e.preventDefault();
-        const res = await axios.get("/create_game");
+        const res = await axios.get("http://localhost:5000/create_game");
         console.log(res.data.game_id);
         setGameId(res.data.game_id);
         setSearchParams({ game_id: res.data.game_id });

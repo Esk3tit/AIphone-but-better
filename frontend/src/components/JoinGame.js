@@ -15,7 +15,7 @@ export default function JoinGame({ gameId, setGameId }) {
   
   async function handleSubmit(e) {
     e.preventDefault();
-    const res = await axios.get("/login", { params: { username: username, game_id: gameId } });
+    const res = await axios.get("http://localhost:5000/login", { params: { username: username, game_id: gameId } });
     console.log(res.data);
     const {user_id, game_id} = res.data;
     navigate(`/game?user_id=${user_id}&game_id=${game_id}`);

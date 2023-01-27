@@ -59,3 +59,7 @@ services:
     image: kaipanofficial/aiphone-react:latest
     ports:
       - 80:80
+    depends_on:
+      - app
+      - image_generator
+      - redis

@@ -28,4 +28,9 @@ After getting the model files set up (see installation section) spin up the dock
 UID=`id -u` GID=`id -g` docker compose up
 ```
 
+The React frontend is hosted on port 8080 by default, which you can access in your web browser with the following URL:
+```
+http://localhost:8080
+```
+
 HAVE FUN!

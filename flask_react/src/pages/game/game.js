@@ -62,6 +62,7 @@ export default function Game() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState(undefined);
   const [genRandPromptDisabled, setGenRandPromptDisabled] = useState(false);
+  const [loadingImgs, setLoadingImgs] = useState(false);
   const navigate = useNavigate();
 
   const refresh = useCallback(async () => {
@@ -187,6 +188,10 @@ export default function Game() {
     data.append("drawn_for", ctx.drawn_for);
     data.append("num_images", numImages);
     data.append("prompt", ctx.prompt);
+
+    setCtx((prevCtx) => {
+      return { ...prevCtx, generated_images: true, images: [] };
+    });
 
     const res = await axios.post("/submit_prompt", data, {
       headers: {

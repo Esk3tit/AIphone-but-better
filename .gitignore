@@ -3,4 +3,6 @@ data
 image_generator/stable-diffusion-v1-5
 image_generator/stable-diffusion-2
 image_generator/stable-diffusion-2-base
-flask_react/node_modules
+frontend/node_modules
+frontend/build
+.env*
